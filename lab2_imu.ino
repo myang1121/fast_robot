@@ -316,9 +316,7 @@ void handle_command()
 
         // Complementary Filtered Signal
         case GET_COMPL_DATA:
-          compl_roll = gyro_gain*(compl_roll + myICM.gyrX()*dt) + accel_gain*(accel_roll);
-          compl_pitch = gyro_gain*(compl_pitch + myICM.gyrY()*dt) + accel_gain*(accel_pitch);
-          compl_yaw = gyro_yaw;
+          updateComplRollPitchYaw();
           // through ble, send to python
           tx_estring_value.clear();
           tx_estring_value.append("Compl_pitch:");
@@ -464,18 +462,31 @@ void loop()
     printScaledAGMT(&myICM); // This function takes into account the scale settings from when the measurement was made to calculate the values with units
     updateAccelPitchRoll(); // get roll and pitch original signal from raw accelerometer reading (float a_x, a_y, a_z)
     updateGyroRollPitchYaw(); // get roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
-    // print accel roll and pitch
+    updateComplRollPitchYaw();
+    // print accel
     SERIAL_PORT.print("Accel Roll (°) = ");
-    SERIAL_PORT.println(accel_roll);
+    SERIAL_PORT.print(accel_roll);
+    SERIAL_PORT.print(", ");
     SERIAL_PORT.print("Accel Pitch (°)= ");
     SERIAL_PORT.println(accel_pitch);
-    // print gyro roll, pitch, yaw
+    // print gyro
     SERIAL_PORT.print("Gyro Roll (°) = ");
-    SERIAL_PORT.println(gyro_roll);
+    SERIAL_PORT.print(gyro_roll);
+    SERIAL_PORT.print(", ");
     SERIAL_PORT.print("Gyro Pitch (°)= ");
-    SERIAL_PORT.println(gyro_pitch);
+    SERIAL_PORT.print(gyro_pitch);
+    SERIAL_PORT.print(", ");
     SERIAL_PORT.print("Gyro Yaw (°)= ");
     SERIAL_PORT.println(gyro_yaw);
+    // print compl
+    SERIAL_PORT.print("Compl Roll (°) = ");
+    SERIAL_PORT.print(compl_roll);
+    SERIAL_PORT.print(", ");
+    SERIAL_PORT.print("Compl Pitch (°)= ");
+    SERIAL_PORT.print(compl_pitch);
+    SERIAL_PORT.print(", ");
+    SERIAL_PORT.print("Compl Yaw (°)= ");
+    SERIAL_PORT.println(compl_yaw);
     delay(300);
   }
   else
@@ -644,6 +655,12 @@ void updateGyroRollPitchYaw() {
   gyro_roll = gyro_roll + myICM.gyrX()*dt;
   gyro_pitch = gyro_pitch + myICM.gyrY()*dt;
   gyro_yaw = gyro_yaw + myICM.gyrZ()*dt; // no complementary data from accelerometer
+}
+
+void updateComplRollPitchYaw() {
+  compl_roll = gyro_gain*(compl_roll + myICM.gyrX()*dt) + accel_gain*(accel_roll);
+  compl_pitch = gyro_gain*(compl_pitch + myICM.gyrY()*dt) + accel_gain*(accel_pitch);
+  compl_yaw = gyro_yaw;
 }
 
 //////////// helper function for ble ////////////
