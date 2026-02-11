@@ -46,11 +46,7 @@ float accel_gain = 0.5; // initialized to 0.5, 50 percent weight on accel, 50 pe
 float gyro_gain = 1. - accel_gain;
 float compl_roll = 0.0;
 float compl_pitch = 0.0;
-
-// variables for complementary filter
-float compl_roll_new;
-float compl_pitch_new;
-float compl_yaw_new;
+float compl_yaw = 0.0; // equal gyro_yaw
 
 //////////// BLE Global Variables & lab 1 global variables ////////////
 BLEService testService(BLE_UUID_TEST_SERVICE);
@@ -97,8 +93,7 @@ enum CommandTypes
     // Complementary Filtered Signal
     GET_COMPL_DATA,
 };
-void
-handle_command()
+void handle_command()
 {   
     // Set the command string from the characteristic value
     robot_cmd.set_cmd_string(rx_characteristic_string.value(),
@@ -255,7 +250,7 @@ handle_command()
 
         // Accelerometer
         case GET_ACCEL_DATA:
-          updateAccelPitchRoll(&myICM);
+          updateAccelPitchRoll();
           // lpf --> angle_lpf = alpha*angle_no_lpf + (1-alpha)*angle_lpf_prev
           accel_roll_lpf = accel_gain*accel_roll+ gyro_gain*accel_roll_lpf;
           accel_pitch_lpf = accel_gain*accel_pitch+ gyro_gain*accel_pitch_lpf;
@@ -281,7 +276,7 @@ handle_command()
           for (int i = 0; i < ARRAY_SIZE; i ++) {
             if (myICM.dataReady()) { // for sampling at 200Hz
               myICM.getAGMT();
-              updateAccelPitchRoll(&myICM);
+              updateAccelPitchRoll();
               accel_pitch_arr[i] = accel_pitch;
               accel_roll_arr[i] = accel_roll;
               arr[i] = millis();
@@ -304,12 +299,37 @@ handle_command()
 
         // Gyroscope
         case GET_GYRO_DATA:
+          updateGyroRollPitchYaw();
+          // through ble, send to python
+          tx_estring_value.clear();
+          tx_estring_value.append("Gyro_pitch:");
+          tx_estring_value.append(gyro_pitch);
+          tx_estring_value.append(",Gyro_roll:");
+          tx_estring_value.append(gyro_roll);
+          tx_estring_value.append(",Gyro_yaw:");
+          tx_estring_value.append(gyro_yaw);
+          tx_estring_value.append(",T:");
+          tx_estring_value.append((int)millis());
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
           
           break;
 
         // Complementary Filtered Signal
         case GET_COMPL_DATA:
-          
+          compl_roll = gyro_gain*(compl_roll + myICM.gyrX()*dt) + accel_gain*(accel_roll);
+          compl_pitch = gyro_gain*(compl_pitch + myICM.gyrY()*dt) + accel_gain*(accel_pitch);
+          compl_yaw = gyro_yaw;
+          // through ble, send to python
+          tx_estring_value.clear();
+          tx_estring_value.append("Compl_pitch:");
+          tx_estring_value.append(compl_pitch);
+          tx_estring_value.append(",Compl_roll:");
+          tx_estring_value.append(compl_roll);
+          tx_estring_value.append(",Compl_yaw:");
+          tx_estring_value.append(compl_yaw);
+          tx_estring_value.append(",T:");
+          tx_estring_value.append((int)millis());
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
           break;
 
         /* 
@@ -345,10 +365,6 @@ void setup()
   delay(2000);    
   digitalWrite(LED_BUILTIN, LOW);
   delay(2000);    
-
-  while (!SERIAL_PORT)
-  {
-  };
   
   // i2c setup
   WIRE_PORT.begin();
@@ -437,30 +453,35 @@ void loop()
           write_data();
           // Read data
           read_data();
-          
-          //////////// IMU ////////////
-          if (myICM.dataReady())
-          {
-            myICM.getAGMT();         // The values are only updated when you call 'getAGMT'
-            //printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
-            printScaledAGMT(&myICM); // This function takes into account the scale settings from when the measurement was made to calculate the values with units
-            updateAccelPitchRoll(&myICM); // get roll and pitch original signal from raw accelerometer reading (float a_x, a_y, a_z)
-            // print roll and pitch
-            SERIAL_PORT.print("Accel Roll (°) = ");
-            SERIAL_PORT.println(accel_roll);
-            SERIAL_PORT.print("Accel Pitch (°)= ");
-            SERIAL_PORT.println(accel_pitch);
-            //PrintLowpassFilteredSignal(&myICM); // print roll and pitch low pass filtered signal
-            //printGyroToPitchRollYaw(&myICM); // print roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
-            delay(300);
-          }
-          else
-          {
-            SERIAL_PORT.println("Waiting for data");
-            delay(500);
-          }
       }
       Serial.println("Disconnected");
+  }
+  //////////// IMU ////////////
+  if (myICM.dataReady())
+  {
+    myICM.getAGMT();         // The values are only updated when you call 'getAGMT'
+    //printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
+    printScaledAGMT(&myICM); // This function takes into account the scale settings from when the measurement was made to calculate the values with units
+    updateAccelPitchRoll(); // get roll and pitch original signal from raw accelerometer reading (float a_x, a_y, a_z)
+    updateGyroRollPitchYaw(); // get roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
+    // print accel roll and pitch
+    SERIAL_PORT.print("Accel Roll (°) = ");
+    SERIAL_PORT.println(accel_roll);
+    SERIAL_PORT.print("Accel Pitch (°)= ");
+    SERIAL_PORT.println(accel_pitch);
+    // print gyro roll, pitch, yaw
+    SERIAL_PORT.print("Gyro Roll (°) = ");
+    SERIAL_PORT.println(gyro_roll);
+    SERIAL_PORT.print("Gyro Pitch (°)= ");
+    SERIAL_PORT.println(gyro_pitch);
+    SERIAL_PORT.print("Gyro Yaw (°)= ");
+    SERIAL_PORT.println(gyro_yaw);
+    delay(300);
+  }
+  else
+  {
+    SERIAL_PORT.println("Waiting for data");
+    delay(500);
   }
 
 }
@@ -606,42 +627,28 @@ void printScaledAGMT(ICM_20948_I2C *sensor)
 
 //////////// helper functions to get accel, gyro, compl value ////////////
 // convert accelerometer data into pitch and roll, update accel_roll and accel_pitch globals
-void updateAccelPitchRoll(ICM_20948_I2C *sensor) {
+void updateAccelPitchRoll() {
   // get a_x, a_y, a_z, accelerometer raw readings, but as floats
-  float a_x = sensor->accX();
-  float a_y = sensor->accY();
-  float a_z = sensor->accZ();
+  float a_x = myICM.accX();
+  float a_y = myICM.accY();
+  float a_z = myICM.accZ();
   // calculate roll and pitch using atan2
   accel_roll = atan2(a_y, a_z) * 180.0 / M_PI; // atan2 returns radian --> convert to degrees using M_PI
   accel_pitch = atan2(a_x, a_z) * 180.0 / M_PI;
 }
 
-
-// void printGyroToPitchRollYaw(ICM_20948_I2C *sensor) {
-//   // get g_x, g_y, g_z, gyroscope raw readings (rate of angular change in degrees/sec), but as floats
-//   float g_x = sensor->gyrX();
-//   float g_y = sensor->gyrY();
-//   float g_z = sensor->gyrZ();
-//   // calculate roll, pitch, and yaw (convert gyro_reading to angles in degrees)
-//   float gyro_roll_new = gyro_roll + g_x*dt;
-//   float gyro_pitch_new = gyro_pitch + g_y*dt;
-//   float gyro_yaw_new = gyro_yaw + g_z*dt;
-// }
-
-// // Use a complementary filter to compute an estimate of pitch and roll that is both accurate (increase accel_gain reduce drift) and stable (increase gyro gain reduce vibration)
-// // gyro_gain = 1 - accel_gain
-// void printComplementaryFilteredSignal(ICM_20948_I2C *sensor) {
-//   float compl_roll_new = (compl_roll + roll_g)(gyro_gain) + roll_a*accel_gain;
-//   float compl_pitch_new = (compl_pitch + pitch_g)(gyro_gain) + pitch_a*accel_gain;
-//   // no complementary data from accelerometer, yaw_a = raw accel reading, a_z
-//   float compl_yaw_new = (compl_yaw + yaw_g)(gyro_gain) + yaw_a*accel_gain;
-
-// }
+// Use a complementary filter to compute an estimate of pitch and roll that is both accurate (increase accel_gain reduce drift) and stable (increase gyro gain reduce vibration)
+// gyro_gain = 1 - accel_gain
+void updateGyroRollPitchYaw() {
+  // calculate roll, pitch, and yaw (convert gyro_reading to angles in degrees)
+  gyro_roll = gyro_roll + myICM.gyrX()*dt;
+  gyro_pitch = gyro_pitch + myICM.gyrY()*dt;
+  gyro_yaw = gyro_yaw + myICM.gyrZ()*dt; // no complementary data from accelerometer
+}
 
 //////////// helper function for ble ////////////
 
-void
-write_data()
+void write_data()
 {
     currentMillis = millis();
     if (currentMillis - previousMillis > interval) {
@@ -658,8 +665,7 @@ write_data()
     }
 }
 
-void
-read_data()
+void read_data()
 {
     // Query if the characteristic value has been written by another BLE device
     if (rx_characteristic_string.written()) {
