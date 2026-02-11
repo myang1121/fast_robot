@@ -1,6 +1,19 @@
 #include "ICM_20948.h" // Click here to get the library: http://librarymanager/All#SparkFun_ICM_20948_IMU
 #include "math.h" // to use atan2 and M_PI
+//////////// Libraries for BLE ////////////
+#include "BLECStringCharacteristic.h"
+#include "EString.h"
+#include "RobotCommand.h"
+#include <ArduinoBLE.h>
+//////////// BLE UUIDs ////////////
+#define BLE_UUID_TEST_SERVICE "15bb5de7-5941-4ba2-bda0-784bb8817a1b"
 
+#define BLE_UUID_RX_STRING "9750f60b-9c9c-4158-b620-02ec9521cd99"
+
+#define BLE_UUID_TX_FLOAT "27616294-3063-4ecc-b60b-3470ddef2938"
+#define BLE_UUID_TX_STRING "f235a225-6735-4d73-94cb-ee5dfce9ba83"
+
+//////////// Serial Monitor & I2C Macros ////////////
 #define SERIAL_PORT Serial
 
 #define WIRE_PORT Wire // Your desired Wire port.      Used when "USE_SPI" is not defined
@@ -10,28 +23,312 @@
 
 ICM_20948_I2C myICM; // Create an ICM_20948_I2C object
 
-// variables for accelerometer roll (x) and pitch (y)
+//////////// Accel, Gyro, Compl, Global Variables --> use ble to send to python ////////////
+// variables for accelerometer roll (x) and pitch (y) 
 float accel_roll = 0.0;
 float accel_pitch = 0.0;
-
-// variables for converting accel_reading to roll, pitch, yaw using atan2, and for low pass filtered roll, pitch, yaw
-float roll_low_passed_new;
+// variables for accelerometer roll (x) and pitch (y) low pass filtered
+float accel_roll_lpf = 0.0;
+float accel_pitch_lpf = 0.0;
+// variables for accelerometer noise
+const int ARRAY_SIZE = 100;
+float accel_pitch_arr[ARRAY_SIZE];
+float accel_roll_arr[ARRAY_SIZE];
 
 // variables for converting gyro_reading (angular change) to roll, pitch, yaw (angles)
-float gyro_roll_new;
+float gyro_roll = 0.0;
+float gyro_pitch = 0.0;
+float gyro_yaw = 0.0;
 float dt = 0.001; // small dt...sampling frequency?
 
-// accelerometer (alpha) and gyro gain in float for complementary filter
+// variables for complementary filter
 float accel_gain = 0.5; // initialized to 0.5, 50 percent weight on accel, 50 percent weight on gyro
 float gyro_gain = 1. - accel_gain;
+float compl_roll = 0.0;
+float compl_pitch = 0.0;
 
 // variables for complementary filter
 float compl_roll_new;
 float compl_pitch_new;
 float compl_yaw_new;
 
+//////////// BLE Global Variables & lab 1 global variables ////////////
+BLEService testService(BLE_UUID_TEST_SERVICE);
+
+BLECStringCharacteristic rx_characteristic_string(BLE_UUID_RX_STRING, BLEWrite, MAX_MSG_SIZE);
+
+BLEFloatCharacteristic tx_characteristic_float(BLE_UUID_TX_FLOAT, BLERead | BLENotify);
+BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | BLENotify, MAX_MSG_SIZE);
+
+// for task 6
+unsigned long arr[ARRAY_SIZE]; 
+
+// for task 7
+float temp_arr[ARRAY_SIZE]; // store temperature reading
+
+// RX
+RobotCommand robot_cmd(":|");
+
+// TX
+EString tx_estring_value;
+float tx_float_value = 0.0;
+
+long interval = 500;
+static long previousMillis = 0;
+unsigned long currentMillis = 0;
+
+//////////// BLE case statements, declare command and handle command ////////////
+enum CommandTypes
+{
+    PING,
+    ECHO,
+    GET_TIME_MILLIS, // task 3
+    GET_CURRRENT_TIME_LOOP,
+    STORE_TIME_STAMP, // task 6
+    SEND_TIME_DATA,
+    STORE_TIME_TEMP_STAMP, // modify later to get time_imu_stamp
+    GET_TEMP_READINGS, // modify later to get time_imu_stamp
+
+    // Accelerometer
+    GET_ACCEL_DATA,
+    GET_ACCEL_NOISE,
+    // Gyroscope
+    GET_GYRO_DATA,
+    // Complementary Filtered Signal
+    GET_COMPL_DATA,
+};
+void
+handle_command()
+{   
+    // Set the command string from the characteristic value
+    robot_cmd.set_cmd_string(rx_characteristic_string.value(),
+                             rx_characteristic_string.valueLength());
+
+    bool success;
+    int cmd_type = -1;
+
+    // Get robot command type (an integer)
+    /* NOTE: THIS SHOULD ALWAYS BE CALLED BEFORE get_next_value()
+     * since it uses strtok internally (refer RobotCommand.h and 
+     * https://www.cplusplus.com/reference/cstring/strtok/)
+     */
+    success = robot_cmd.get_command_type(cmd_type);
+
+    // Check if the last tokenization was successful and return if failed
+    if (!success) {
+        return;
+    }
+
+    // Handle the command type accordingly
+    switch (cmd_type) {
+        /*
+         * Write "PONG" on the GATT characteristic BLE_UUID_TX_STRING
+         */
+        case PING:
+            tx_estring_value.clear();
+            tx_estring_value.append("PONG");
+            tx_characteristic_string.writeValue(tx_estring_value.c_str());
+
+            Serial.print("Sent back: ");
+            Serial.println(tx_estring_value.c_str());
+
+            break;
+
+        case ECHO:
+            char char_arr[MAX_MSG_SIZE];
+
+            // Extract the next value from the command string as a character array
+            success = robot_cmd.get_next_value(char_arr);
+            if (!success)
+                return;
+            
+            tx_estring_value.clear();
+            tx_estring_value.append("Robot says -> ");
+            tx_estring_value.append(char_arr);
+            tx_estring_value.append(" :)");
+            tx_characteristic_string.writeValue(tx_estring_value.c_str());
+
+            Serial.print("Sent back: ");
+            Serial.println(tx_estring_value.c_str());
+            
+            break;
+
+        /*
+         * GET_TIME_MILLIS
+         * Robot reply write a string such as “T:123456” to the string characteristic
+         */
+        
+        case GET_TIME_MILLIS:
+            unsigned long millisTime;
+            millisTime = millis();
+            tx_estring_value.clear();
+            tx_estring_value.append("T:");
+            tx_estring_value.append((int)millisTime);
+            tx_characteristic_string.writeValue(tx_estring_value.c_str());
+
+            Serial.print("Sent back: ");
+            Serial.println(tx_estring_value.c_str());
+            
+            break;
+
+        /*
+         * Task 5
+         * GET_CURRENT_TIME_LOOP
+         * Write a loop to get current time in miliseconds.
+         * Send the current times to laptop to be received and processed by the notification handler.
+         * Collect these values for a few seconds and use time stamps to determine how fast messages can be sent.
+         */
+        case GET_CURRRENT_TIME_LOOP:
+            unsigned long millisTime_loop;
+            for (int i = 0; i < 100; i++) {
+                millisTime_loop = millis();
+                tx_estring_value.clear();
+                tx_estring_value.append("T:");
+                tx_estring_value.append((int)millisTime_loop);
+                // after notification handler starts notify, this loop continuously feed the notification handler data (current time) to be printed
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                // this is what the laptop (python jupyter notebook) sees
+                Serial.println(tx_estring_value.c_str());
+            }
+            break;
+        
+        /*
+         * Task 6
+         * STORE_TIME_STAMP
+         * Rather than send each time stamp, place each time stamp into the global array arr
+         * Logic to determine when array is full so don't "over fill" the array
+         */
+        case STORE_TIME_STAMP:
+            for (int i = 0; i < ARRAY_SIZE; i++) {
+                // rather than writeValue, which sends the data to the laptop
+                // store in array
+                arr[i] = millis();
+            }
+            break;
+        
+        /*
+         * SEND_TIME_DATA
+         * Loops the array
+         * Send each data point as a string to laptop to be processed
+         */
+        case SEND_TIME_DATA:
+            for (int i = 0; i < ARRAY_SIZE; i++) {
+                tx_estring_value.clear();
+                tx_estring_value.append("T:");
+                tx_estring_value.append((int)arr[i]);
+                // send each data point to laptop
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                delay(10);
+            }
+
+            break;
+
+        /*
+         * Task 7
+         * STORE_TIME_TEMP_STAMP
+         * Element in time stamp and temperature reading array should correspond
+         * Send each data point as a string to laptop to be processed
+         */
+        case STORE_TIME_TEMP_STAMP:
+            for (int i = 0; i < ARRAY_SIZE; i++) {
+                arr[i] = millis();
+                temp_arr[i] = getTempDegF();
+            }
+            break;
+
+        /*
+         * GET_TEMP_READINGS
+         * Send time and temp reading to laptop
+         */
+        case GET_TEMP_READINGS:
+            for (int i = 0; i < ARRAY_SIZE; i++) {
+                tx_estring_value.clear();
+                tx_estring_value.append("Temperature:");
+                tx_estring_value.append(temp_arr[i]);
+                tx_estring_value.append(",Time:");
+                tx_estring_value.append((int)arr[i]);
+                // send each data point to laptop
+                tx_characteristic_string.writeValue(tx_estring_value.c_str());
+                delay(10);
+            }
+        break;
+
+        // Accelerometer
+        case GET_ACCEL_DATA:
+          updateAccelPitchRoll(&myICM);
+          // lpf --> angle_lpf = alpha*angle_no_lpf + (1-alpha)*angle_lpf_prev
+          accel_roll_lpf = accel_gain*accel_roll+ gyro_gain*accel_roll_lpf;
+          accel_pitch_lpf = accel_gain*accel_pitch+ gyro_gain*accel_pitch_lpf;
+
+          // through ble, send to python
+          tx_estring_value.clear();
+          tx_estring_value.append("Accel_pitch:");
+          tx_estring_value.append(accel_pitch);
+          tx_estring_value.append(",Accel_roll:");
+          tx_estring_value.append(accel_roll);
+          tx_estring_value.append(",Accel_roll_lpf:");
+          tx_estring_value.append(accel_roll_lpf);
+          tx_estring_value.append(",Accel_pitch_lpf:");
+          tx_estring_value.append(accel_pitch_lpf);
+          tx_estring_value.append(",T:");
+          tx_estring_value.append((int)millis());
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+
+          break;
+
+        case GET_ACCEL_NOISE:
+        // store in array
+          for (int i = 0; i < ARRAY_SIZE; i ++) {
+            if (myICM.dataReady()) { // for sampling at 200Hz
+              myICM.getAGMT();
+              updateAccelPitchRoll(&myICM);
+              accel_pitch_arr[i] = accel_pitch;
+              accel_roll_arr[i] = accel_roll;
+              arr[i] = millis();
+            }
+            delay(5); // 5ms = 200Hz --> record as fast and consistently as possible
+          }
+          // through ble, send to python
+          for (int i = 0; i < ARRAY_SIZE; i ++) {
+            tx_estring_value.clear();
+            tx_estring_value.append("Accel_pitch:");
+            tx_estring_value.append(accel_pitch_arr[i]);
+            tx_estring_value.append(",Accel_roll:");
+            tx_estring_value.append(accel_roll_arr[i]);
+            tx_estring_value.append(",T:");
+            tx_estring_value.append((int)arr[i]);
+            tx_characteristic_string.writeValue(tx_estring_value.c_str());
+            delay(10); // to ensure all 100 samples send to python
+          } 
+          break;
+
+        // Gyroscope
+        case GET_GYRO_DATA:
+          
+          break;
+
+        // Complementary Filtered Signal
+        case GET_COMPL_DATA:
+          
+          break;
+
+        /* 
+         * The default case may not capture all types of invalid commands.
+         * It is safer to validate the command string on the central device (in python)
+         * before writing to the characteristic.
+         */
+        default:
+            Serial.print("Invalid Command Type: ");
+            Serial.println(cmd_type);
+            break;
+    }
+}
+
+//////////// Start! ////////////
 void setup()
 {
+  SERIAL_PORT.begin(115200);
+
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
 
@@ -49,7 +346,6 @@ void setup()
   digitalWrite(LED_BUILTIN, LOW);
   delay(2000);    
 
-  SERIAL_PORT.begin(115200);
   while (!SERIAL_PORT)
   {
   };
@@ -78,25 +374,95 @@ void setup()
       initialized = true;
     }
   }
+
+  //////////// BLE Setup ////////////
+  BLE.begin();
+  // Set advertised local name and service
+    BLE.setDeviceName("Artemis BLE");
+    BLE.setLocalName("Artemis BLE");
+    BLE.setAdvertisedService(testService);
+
+    // Add BLE characteristics
+    testService.addCharacteristic(tx_characteristic_float);
+    testService.addCharacteristic(tx_characteristic_string);
+    testService.addCharacteristic(rx_characteristic_string);
+
+    // Add BLE service
+    BLE.addService(testService);
+
+    // Initial values for characteristics
+    // Set initial values to prevent errors when reading for the first time on central devices
+    tx_characteristic_float.writeValue(0.0);
+
+    /*
+     * An example using the EString
+     */
+    // Clear the contents of the EString before using it
+    tx_estring_value.clear();
+
+    // Append the string literal "[->"
+    tx_estring_value.append("[->");
+
+    // Append the float value
+    tx_estring_value.append(9.0);
+
+    // Append the string literal "<-]"
+    tx_estring_value.append("<-]");
+
+    // Write the value to the characteristic
+    tx_characteristic_string.writeValue(tx_estring_value.c_str());
+
+    // Output MAC Address
+    Serial.print("Advertising BLE with MAC: ");
+    Serial.println(BLE.address());
+
+    BLE.advertise();
 }
 
+//////////// Main loop! ////////////
 void loop()
 {
-  if (myICM.dataReady())
-  {
-    myICM.getAGMT();         // The values are only updated when you call 'getAGMT'
-    //printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
-    printScaledAGMT(&myICM); // This function takes into account the scale settings from when the measurement was made to calculate the values with units
-    printAccelToPitchRoll(&myICM); // print roll and pitch original signal from raw accelerometer reading (float a_x, a_y, a_z)
-    //PrintLowpassFilteredSignal(&myICM); // print roll and pitch low pass filtered signal
-    //printGyroToPitchRollYaw(&myICM); // print roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
-    delay(300);
+  // Listen for connections
+  BLEDevice central = BLE.central();
+
+  // If a central is connected to the peripheral
+  // print MAC address
+  if (central) {
+      Serial.print("Connected to: ");
+      Serial.println(central.address());
+
+      // While central is connected
+      while (central.connected()) {
+          // Send data
+          write_data();
+          // Read data
+          read_data();
+          
+          //////////// IMU ////////////
+          if (myICM.dataReady())
+          {
+            myICM.getAGMT();         // The values are only updated when you call 'getAGMT'
+            //printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
+            printScaledAGMT(&myICM); // This function takes into account the scale settings from when the measurement was made to calculate the values with units
+            updateAccelPitchRoll(&myICM); // get roll and pitch original signal from raw accelerometer reading (float a_x, a_y, a_z)
+            // print roll and pitch
+            SERIAL_PORT.print("Accel Roll (°) = ");
+            SERIAL_PORT.println(accel_roll);
+            SERIAL_PORT.print("Accel Pitch (°)= ");
+            SERIAL_PORT.println(accel_pitch);
+            //PrintLowpassFilteredSignal(&myICM); // print roll and pitch low pass filtered signal
+            //printGyroToPitchRollYaw(&myICM); // print roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
+            delay(300);
+          }
+          else
+          {
+            SERIAL_PORT.println("Waiting for data");
+            delay(500);
+          }
+      }
+      Serial.println("Disconnected");
   }
-  else
-  {
-    SERIAL_PORT.println("Waiting for data");
-    delay(500);
-  }
+
 }
 
 //////////// helper functions to print the data nicely ////////////
@@ -239,28 +605,16 @@ void printScaledAGMT(ICM_20948_I2C *sensor)
 }
 
 //////////// helper functions to get accel, gyro, compl value ////////////
-// convert accelerometer data into pitch and roll
-void printAccelToPitchRoll(ICM_20948_I2C *sensor) {
+// convert accelerometer data into pitch and roll, update accel_roll and accel_pitch globals
+void updateAccelPitchRoll(ICM_20948_I2C *sensor) {
   // get a_x, a_y, a_z, accelerometer raw readings, but as floats
   float a_x = sensor->accX();
   float a_y = sensor->accY();
   float a_z = sensor->accZ();
   // calculate roll and pitch using atan2
-  float roll = atan2(a_y, a_z) * 180.0 / M_PI; // atan2 returns radian --> convert to degrees
-  float pitch = atan2(a_x, a_z) * 180.0 / M_PI;
-  // print roll and pitch
-  SERIAL_PORT.print("Roll (°) = ");
-  SERIAL_PORT.println(roll);
-  SERIAL_PORT.print("Pitch (°)= ");
-  SERIAL_PORT.println(pitch);
+  accel_roll = atan2(a_y, a_z) * 180.0 / M_PI; // atan2 returns radian --> convert to degrees using M_PI
+  accel_pitch = atan2(a_x, a_z) * 180.0 / M_PI;
 }
-
-// // simple lowpass filter on accelerometer data
-// void PrintLowpassFilteredSignal(ICM_20948_I2C *sensor) {
-//   // maybe i should call printAccelToPitchRow? instead of having it print, have it return soem value and let other helper function print the returned original atan2 calculated roll and pitch? 
-//   float roll_low_passed_new = accel_gain*roll_raw + (1 - accel_gain)*roll_low_passed;
-//   roll_low_passed = roll_low_passed_new;
-// }
 
 
 // void printGyroToPitchRollYaw(ICM_20948_I2C *sensor) {
@@ -286,4 +640,30 @@ void printAccelToPitchRoll(ICM_20948_I2C *sensor) {
 
 //////////// helper function for ble ////////////
 
+void
+write_data()
+{
+    currentMillis = millis();
+    if (currentMillis - previousMillis > interval) {
+
+        tx_float_value = tx_float_value + 0.5;
+        tx_characteristic_float.writeValue(tx_float_value);
+
+        if (tx_float_value > 10000) {
+            tx_float_value = 0;
+            
+        }
+
+        previousMillis = currentMillis;
+    }
+}
+
+void
+read_data()
+{
+    // Query if the characteristic value has been written by another BLE device
+    if (rx_characteristic_string.written()) {
+        handle_command();
+    }
+}
 
