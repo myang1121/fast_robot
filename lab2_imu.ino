@@ -1,34 +1,14 @@
-/****************************************************************
- * Example1_Basics.ino
- * ICM 20948 Arduino Library Demo
- * Use the default configuration to stream 9-axis IMU data
- * Owen Lyke @ SparkFun Electronics
- * Original Creation Date: April 17 2019
- *
- * Please see License.md for the license information.
- *
- * Distributed as-is; no warranty is given.
- ***************************************************************/
 #include "ICM_20948.h" // Click here to get the library: http://librarymanager/All#SparkFun_ICM_20948_IMU
 #include "math.h" // to use atan2 and M_PI
 
-//#define USE_SPI       // Uncomment this to use SPI
-
 #define SERIAL_PORT Serial
-
-#define SPI_PORT SPI // Your desired SPI port.       Used only when "USE_SPI" is defined
-#define CS_PIN 2     // Which pin you connect CS to. Used only when "USE_SPI" is defined
 
 #define WIRE_PORT Wire // Your desired Wire port.      Used when "USE_SPI" is not defined
 // The value of the last bit of the I2C address.
 // On the SparkFun 9DoF IMU breakout the default is 1, and when the ADR jumper is closed the value becomes 0
 #define AD0_VAL 1
 
-#ifdef USE_SPI
-ICM_20948_SPI myICM; // If using SPI create an ICM_20948_SPI object
-#else
-ICM_20948_I2C myICM; // Otherwise create an ICM_20948_I2C object
-#endif
+ICM_20948_I2C myICM; // Create an ICM_20948_I2C object
 
 // variables for accelerometer roll (x) and pitch (y)
 float accel_roll = 0.0;
@@ -73,25 +53,18 @@ void setup()
   while (!SERIAL_PORT)
   {
   };
-
-#ifdef USE_SPI
-  SPI_PORT.begin();
-#else
+  
+  // i2c setup
   WIRE_PORT.begin();
   WIRE_PORT.setClock(400000);
-#endif
 
   //myICM.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   bool initialized = false;
   while (!initialized)
   {
-
-#ifdef USE_SPI
-    myICM.begin(CS_PIN, SPI_PORT);
-#else
+    // begin i2c
     myICM.begin(WIRE_PORT, AD0_VAL);
-#endif
 
     SERIAL_PORT.print(F("Initialization of the sensor returned: "));
     SERIAL_PORT.println(myICM.statusString());
@@ -126,8 +99,7 @@ void loop()
   }
 }
 
-// Below here are some helper functions to print the data nicely!
-
+//////////// helper functions to print the data nicely ////////////
 void printPaddedInt16b(int16_t val)
 {
   if (val > 0)
@@ -240,6 +212,33 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals)
   }
 }
 
+void printScaledAGMT(ICM_20948_I2C *sensor)
+{
+  SERIAL_PORT.print("Scaled. Acc (mg) [ ");
+  printFormattedFloat(sensor->accX(), 5, 2);
+  SERIAL_PORT.print(", ");
+  printFormattedFloat(sensor->accY(), 5, 2);
+  SERIAL_PORT.print(", ");
+  printFormattedFloat(sensor->accZ(), 5, 2);
+  SERIAL_PORT.print(" ], Gyr (DPS) [ ");
+  printFormattedFloat(sensor->gyrX(), 5, 2);
+  SERIAL_PORT.print(", ");
+  printFormattedFloat(sensor->gyrY(), 5, 2);
+  SERIAL_PORT.print(", ");
+  printFormattedFloat(sensor->gyrZ(), 5, 2);
+  SERIAL_PORT.print(" ], Mag (uT) [ ");
+  printFormattedFloat(sensor->magX(), 5, 2);
+  SERIAL_PORT.print(", ");
+  printFormattedFloat(sensor->magY(), 5, 2);
+  SERIAL_PORT.print(", ");
+  printFormattedFloat(sensor->magZ(), 5, 2);
+  SERIAL_PORT.print(" ], Tmp (C) [ ");
+  printFormattedFloat(sensor->temp(), 5, 2);
+  SERIAL_PORT.print(" ]");
+  SERIAL_PORT.println();
+}
+
+//////////// helper functions to get accel, gyro, compl value ////////////
 // convert accelerometer data into pitch and roll
 void printAccelToPitchRoll(ICM_20948_I2C *sensor) {
   // get a_x, a_y, a_z, accelerometer raw readings, but as floats
@@ -285,34 +284,6 @@ void printAccelToPitchRoll(ICM_20948_I2C *sensor) {
 
 // }
 
+//////////// helper function for ble ////////////
 
-#ifdef USE_SPI
-void printScaledAGMT(ICM_20948_SPI *sensor)
-{
-#else
-void printScaledAGMT(ICM_20948_I2C *sensor)
-{
-#endif
-  SERIAL_PORT.print("Scaled. Acc (mg) [ ");
-  printFormattedFloat(sensor->accX(), 5, 2);
-  SERIAL_PORT.print(", ");
-  printFormattedFloat(sensor->accY(), 5, 2);
-  SERIAL_PORT.print(", ");
-  printFormattedFloat(sensor->accZ(), 5, 2);
-  SERIAL_PORT.print(" ], Gyr (DPS) [ ");
-  printFormattedFloat(sensor->gyrX(), 5, 2);
-  SERIAL_PORT.print(", ");
-  printFormattedFloat(sensor->gyrY(), 5, 2);
-  SERIAL_PORT.print(", ");
-  printFormattedFloat(sensor->gyrZ(), 5, 2);
-  SERIAL_PORT.print(" ], Mag (uT) [ ");
-  printFormattedFloat(sensor->magX(), 5, 2);
-  SERIAL_PORT.print(", ");
-  printFormattedFloat(sensor->magY(), 5, 2);
-  SERIAL_PORT.print(", ");
-  printFormattedFloat(sensor->magZ(), 5, 2);
-  SERIAL_PORT.print(" ], Tmp (C) [ ");
-  printFormattedFloat(sensor->temp(), 5, 2);
-  SERIAL_PORT.print(" ]");
-  SERIAL_PORT.println();
-}
+
