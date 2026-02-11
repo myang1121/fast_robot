@@ -13,9 +13,7 @@
 #define BLE_UUID_TX_FLOAT "27616294-3063-4ecc-b60b-3470ddef2938"
 #define BLE_UUID_TX_STRING "f235a225-6735-4d73-94cb-ee5dfce9ba83"
 
-//////////// Serial Monitor & I2C Macros ////////////
-#define SERIAL_PORT Serial
-
+//////////// I2C Macros ////////////
 #define WIRE_PORT Wire // Your desired Wire port.      Used when "USE_SPI" is not defined
 // The value of the last bit of the I2C address.
 // On the SparkFun 9DoF IMU breakout the default is 1, and when the ADR jumper is closed the value becomes 0
@@ -345,7 +343,7 @@ void handle_command()
 //////////// Start! ////////////
 void setup()
 {
-  SERIAL_PORT.begin(115200);
+  Serial.begin(115200);
 
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_BUILTIN, OUTPUT);
@@ -376,11 +374,11 @@ void setup()
     // begin i2c
     myICM.begin(WIRE_PORT, AD0_VAL);
 
-    SERIAL_PORT.print(F("Initialization of the sensor returned: "));
-    SERIAL_PORT.println(myICM.statusString());
+    Serial.print(F("Initialization of the sensor returned: "));
+    Serial.println(myICM.statusString());
     if (myICM.status != ICM_20948_Stat_Ok)
     {
-      SERIAL_PORT.println("Trying again...");
+      Serial.println("Trying again...");
       delay(500);
     }
     else
@@ -464,34 +462,34 @@ void loop()
     updateGyroRollPitchYaw(); // get roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
     updateComplRollPitchYaw();
     // print accel
-    SERIAL_PORT.print("Accel Roll (°) = ");
-    SERIAL_PORT.print(accel_roll);
-    SERIAL_PORT.print(", ");
-    SERIAL_PORT.print("Accel Pitch (°)= ");
-    SERIAL_PORT.println(accel_pitch);
+    Serial.print("Accel Roll (°) = ");
+    Serial.print(accel_roll);
+    Serial.print(", ");
+    Serial.print("Accel Pitch (°)= ");
+    Serial.println(accel_pitch);
     // print gyro
-    SERIAL_PORT.print("Gyro Roll (°) = ");
-    SERIAL_PORT.print(gyro_roll);
-    SERIAL_PORT.print(", ");
-    SERIAL_PORT.print("Gyro Pitch (°)= ");
-    SERIAL_PORT.print(gyro_pitch);
-    SERIAL_PORT.print(", ");
-    SERIAL_PORT.print("Gyro Yaw (°)= ");
-    SERIAL_PORT.println(gyro_yaw);
+    Serial.print("Gyro Roll (°) = ");
+    Serial.print(gyro_roll);
+    Serial.print(", ");
+    Serial.print("Gyro Pitch (°)= ");
+    Serial.print(gyro_pitch);
+    Serial.print(", ");
+    Serial.print("Gyro Yaw (°)= ");
+    Serial.println(gyro_yaw);
     // print compl
-    SERIAL_PORT.print("Compl Roll (°) = ");
-    SERIAL_PORT.print(compl_roll);
-    SERIAL_PORT.print(", ");
-    SERIAL_PORT.print("Compl Pitch (°)= ");
-    SERIAL_PORT.print(compl_pitch);
-    SERIAL_PORT.print(", ");
-    SERIAL_PORT.print("Compl Yaw (°)= ");
-    SERIAL_PORT.println(compl_yaw);
+    Serial.print("Compl Roll (°) = ");
+    Serial.print(compl_roll);
+    Serial.print(", ");
+    Serial.print("Compl Pitch (°)= ");
+    Serial.print(compl_pitch);
+    Serial.print(", ");
+    Serial.print("Compl Yaw (°)= ");
+    Serial.println(compl_yaw);
     delay(300);
   }
   else
   {
-    SERIAL_PORT.println("Waiting for data");
+    Serial.println("Waiting for data");
     delay(500);
   }
 
@@ -502,71 +500,71 @@ void printPaddedInt16b(int16_t val)
 {
   if (val > 0)
   {
-    SERIAL_PORT.print(" ");
+    Serial.print(" ");
     if (val < 10000)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     if (val < 1000)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     if (val < 100)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     if (val < 10)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
   }
   else
   {
-    SERIAL_PORT.print("-");
+    Serial.print("-");
     if (abs(val) < 10000)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     if (abs(val) < 1000)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     if (abs(val) < 100)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     if (abs(val) < 10)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
   }
-  SERIAL_PORT.print(abs(val));
+  Serial.print(abs(val));
 }
 
 void printRawAGMT(ICM_20948_AGMT_t agmt)
 {
-  SERIAL_PORT.print("RAW. Acc [ ");
+  Serial.print("RAW. Acc [ ");
   printPaddedInt16b(agmt.acc.axes.x);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printPaddedInt16b(agmt.acc.axes.y);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printPaddedInt16b(agmt.acc.axes.z);
-  SERIAL_PORT.print(" ], Gyr [ ");
+  Serial.print(" ], Gyr [ ");
   printPaddedInt16b(agmt.gyr.axes.x);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printPaddedInt16b(agmt.gyr.axes.y);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printPaddedInt16b(agmt.gyr.axes.z);
-  SERIAL_PORT.print(" ], Mag [ ");
+  Serial.print(" ], Mag [ ");
   printPaddedInt16b(agmt.mag.axes.x);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printPaddedInt16b(agmt.mag.axes.y);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printPaddedInt16b(agmt.mag.axes.z);
-  SERIAL_PORT.print(" ], Tmp [ ");
+  Serial.print(" ], Tmp [ ");
   printPaddedInt16b(agmt.tmp.val);
-  SERIAL_PORT.print(" ]");
-  SERIAL_PORT.println();
+  Serial.print(" ]");
+  Serial.println();
 }
 
 void printFormattedFloat(float val, uint8_t leading, uint8_t decimals)
@@ -574,11 +572,11 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals)
   float aval = abs(val);
   if (val < 0)
   {
-    SERIAL_PORT.print("-");
+    Serial.print("-");
   }
   else
   {
-    SERIAL_PORT.print(" ");
+    Serial.print(" ");
   }
   for (uint8_t indi = 0; indi < leading; indi++)
   {
@@ -593,7 +591,7 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals)
     }
     if (aval < tenpow)
     {
-      SERIAL_PORT.print("0");
+      Serial.print("0");
     }
     else
     {
@@ -602,38 +600,38 @@ void printFormattedFloat(float val, uint8_t leading, uint8_t decimals)
   }
   if (val < 0)
   {
-    SERIAL_PORT.print(-val, decimals);
+    Serial.print(-val, decimals);
   }
   else
   {
-    SERIAL_PORT.print(val, decimals);
+    Serial.print(val, decimals);
   }
 }
 
 void printScaledAGMT(ICM_20948_I2C *sensor)
 {
-  SERIAL_PORT.print("Scaled. Acc (mg) [ ");
+  Serial.print("Scaled. Acc (mg) [ ");
   printFormattedFloat(sensor->accX(), 5, 2);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printFormattedFloat(sensor->accY(), 5, 2);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printFormattedFloat(sensor->accZ(), 5, 2);
-  SERIAL_PORT.print(" ], Gyr (DPS) [ ");
+  Serial.print(" ], Gyr (DPS) [ ");
   printFormattedFloat(sensor->gyrX(), 5, 2);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printFormattedFloat(sensor->gyrY(), 5, 2);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printFormattedFloat(sensor->gyrZ(), 5, 2);
-  SERIAL_PORT.print(" ], Mag (uT) [ ");
+  Serial.print(" ], Mag (uT) [ ");
   printFormattedFloat(sensor->magX(), 5, 2);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printFormattedFloat(sensor->magY(), 5, 2);
-  SERIAL_PORT.print(", ");
+  Serial.print(", ");
   printFormattedFloat(sensor->magZ(), 5, 2);
-  SERIAL_PORT.print(" ], Tmp (C) [ ");
+  Serial.print(" ], Tmp (C) [ ");
   printFormattedFloat(sensor->temp(), 5, 2);
-  SERIAL_PORT.print(" ]");
-  SERIAL_PORT.println();
+  Serial.print(" ]");
+  Serial.println();
 }
 
 //////////// helper functions to get accel, gyro, compl value ////////////
