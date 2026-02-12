@@ -1,0 +1,445 @@
+ 2026-01-08 10:40:12,561 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-08 10:40:12,561 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-08 10:40:12,563 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-08 10:40:12,565 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-08 10:40:12,566 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-08 10:40:17,210 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=12, micro=10, releaselevel='final', serial=0)
+2026-01-08 10:40:17,210 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-15.1.1-arm64-arm-64bit
+2026-01-08 10:40:17,210 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:31:25:23:64
+2026-01-08 10:52:48,897 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-01-08 10:52:48,900 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-01-08 10:52:48,900 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-01-08 10:52:55,714 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-08 10:52:55,715 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-08 10:52:55,717 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-08 10:52:55,718 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-08 10:52:55,719 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-08 10:52:59,775 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=12, micro=10, releaselevel='final', serial=0)
+2026-01-08 10:52:59,775 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-15.1.1-arm64-arm-64bit
+2026-01-08 10:52:59,776 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:31:25:23:64
+2026-01-08 10:52:59,777 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with service UUID: d1e59283-ea64-46d2-9619-feda9179e362
+2026-01-08 10:53:09,859 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service d1e59283-ea64-46d2-9619-feda9179e362
+2026-01-08 10:53:09,862 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 896214EC-B8B9-1801-B251-8F8579C5D0EB (name: Artemis BLE)
+2026-01-08 10:55:34,604 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-01-08 10:55:34,609 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-01-08 10:55:46,257 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-08 10:55:46,257 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-08 10:55:46,258 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-08 10:55:46,259 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-08 10:55:46,260 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-08 10:55:49,165 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=12, micro=10, releaselevel='final', serial=0)
+2026-01-08 10:55:49,165 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-15.1.1-arm64-arm-64bit
+2026-01-08 10:55:49,166 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:31:25:23:64
+2026-01-08 10:55:49,167 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with service UUID: d1e59283-ea64-46d2-9619-feda9179e362
+2026-01-08 10:55:59,247 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service d1e59283-ea64-46d2-9619-feda9179e362
+2026-01-08 10:55:59,249 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 896214EC-B8B9-1801-B251-8F8579C5D0EB (name: Artemis BLE)
+2026-01-08 10:56:00,001 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:31:25:23:64
+2026-01-08 12:18:10,126 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-01-08 12:18:10,129 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-01-08 12:18:10,130 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-01-08 12:18:10,227 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-01-08 12:18:10,233 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-01-08 12:18:16,818 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-08 12:18:16,818 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-08 12:18:16,819 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-08 12:18:16,821 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-08 12:18:16,822 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-08 12:18:20,566 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=12, micro=10, releaselevel='final', serial=0)
+2026-01-08 12:18:20,566 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-15.1.1-arm64-arm-64bit
+2026-01-08 12:18:20,567 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:31:25:23:64
+2026-01-08 12:18:20,568 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:31:25:23:64, service UUID: d1e59283-ea64-46d2-9619-feda9179e362
+2026-01-08 12:18:30,651 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service d1e59283-ea64-46d2-9619-feda9179e362
+2026-01-08 12:18:30,654 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 896214EC-B8B9-1801-B251-8F8579C5D0EB (name: Artemis BLE)
+2026-01-08 12:18:31,373 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:31:25:23:64
+2026-01-20 16:19:31,703 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-20 16:19:31,707 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-20 16:19:31,717 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-20 16:19:31,718 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-20 16:19:31,719 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-20 16:25:03,056 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=9, micro=12, releaselevel='final', serial=0)
+2026-01-20 16:25:03,059 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-x86_64-i386-64bit
+2026-01-20 16:25:03,062 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-20 16:25:03,063 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-20 16:25:19,399 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-20 16:25:19,400 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-20 16:25:29,490 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-20 16:25:29,498 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-20 16:25:30,677 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-24 00:14:52,511 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-01-24 00:14:52,564 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-01-24 00:14:52,564 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-01-27 14:14:08,040 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-27 14:14:08,051 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-27 14:14:08,061 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-27 14:14:08,061 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-27 14:14:08,062 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-27 14:25:46,963 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-01-27 14:25:46,967 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-01-27 14:25:46,974 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 14:25:46,979 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:25:58,739 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:25:58,743 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 14:25:59,641 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 14:39:03,389 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-27 14:39:03,390 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-27 14:39:03,393 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-27 14:39:03,394 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-27 14:39:03,394 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-27 14:39:07,142 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 14:39:07,144 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:39:17,203 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:39:17,208 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 14:39:18,185 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 14:40:13,164 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-01-27 14:40:13,167 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-01-27 14:40:13,167 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-01-27 14:40:14,176 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-01-27 14:40:14,177 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-01-27 14:40:44,458 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-27 14:40:44,459 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-27 14:40:44,461 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-27 14:40:44,461 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-27 14:40:44,462 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-27 14:40:50,534 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-01-27 14:40:50,536 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-01-27 14:40:50,538 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 14:40:50,540 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:41:00,702 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:41:00,709 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 14:41:01,595 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 14:57:06,984 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 14:57:06,997 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:57:17,061 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 14:57:17,066 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 14:57:18,130 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:03:00,039 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:03:00,041 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:03:10,110 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:03:10,127 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:03:10,931 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:04:20,977 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:04:20,979 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:04:31,039 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:04:31,046 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:04:32,021 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:13:30,403 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:13:30,409 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:13:40,468 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:13:40,472 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:13:41,385 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:19:06,489 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-27 15:19:06,493 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-27 15:19:06,497 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-27 15:19:06,499 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-27 15:19:06,499 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-27 15:29:52,691 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:29:52,694 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:30:02,758 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:30:02,764 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:30:03,650 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:34:07,682 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-27 15:34:07,683 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-27 15:34:07,684 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-27 15:34:07,686 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-27 15:34:07,686 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-01-27 15:34:12,035 | MainThread   | [INFO    ] | _connect            |: Already connected to a BLE device
+2026-01-27 15:35:11,642 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-01-27 15:35:11,650 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-01-27 15:35:12,209 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-01-27 15:35:12,210 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-01-27 15:35:28,050 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-01-27 15:35:28,051 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-01-27 15:35:28,052 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:35:28,052 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:35:38,152 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:35:38,161 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:35:39,321 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:37:58,808 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:37:58,809 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:38:08,862 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:38:08,863 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:38:10,103 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:38:54,842 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:38:54,845 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:39:04,889 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:39:04,895 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:39:05,907 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:42:50,122 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-01-27 15:42:50,124 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:43:00,191 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-01-27 15:43:00,201 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-01-27 15:43:01,200 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-01-27 15:44:15,371 | MainThread   | [INFO    ] | _connect            |: Already connected to a BLE device
+2026-01-27 15:48:18,757 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-01-27 15:48:18,767 | MainThread   | [INFO    ] | <module>            |: info
+2026-01-27 15:48:18,770 | MainThread   | [WARNING ] | <module>            |: warning
+2026-01-27 15:48:18,771 | MainThread   | [ERROR   ] | <module>            |: error
+2026-01-27 15:48:18,773 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 19:44:39,320 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 19:44:39,324 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 19:44:39,337 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 19:44:39,338 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 19:44:39,338 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 19:44:46,645 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-02 19:44:46,647 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-02 19:44:46,660 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 19:44:46,665 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 19:44:56,926 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 19:44:56,937 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 19:44:58,058 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 19:46:38,711 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 19:46:38,716 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 19:46:38,721 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 19:46:38,726 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 19:46:38,731 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 19:46:43,598 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 19:46:43,599 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 19:46:53,717 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 19:46:53,730 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 19:46:54,607 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 20:15:15,163 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 20:15:15,180 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 20:15:25,327 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 20:15:25,337 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 20:15:26,259 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 20:19:23,340 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 20:19:23,352 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 20:19:33,456 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 20:19:33,467 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 20:19:34,392 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 20:19:48,029 | MainThread   | [INFO    ] | _connect            |: Already connected to a BLE device
+2026-02-02 20:25:41,018 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-02 20:25:41,025 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-02 20:25:41,025 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-02 20:26:23,127 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 20:26:23,129 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 20:26:23,132 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 20:26:23,134 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 20:26:23,135 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 20:26:25,849 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-02 20:26:25,850 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-02 20:26:25,850 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 20:26:25,851 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 20:26:35,995 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 20:26:36,002 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 20:26:36,878 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 21:11:36,522 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 21:11:36,558 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:11:46,719 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:11:46,726 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 21:11:47,614 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 21:12:47,855 | MainThread   | [INFO    ] | _connect            |: Already connected to a BLE device
+2026-02-02 21:13:25,062 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-02 21:13:25,072 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-02-02 21:13:26,011 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-02 21:13:26,012 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-02 21:13:43,358 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-02 21:13:43,359 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-02 21:13:43,359 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 21:13:43,360 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:13:53,538 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:13:53,550 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 21:13:54,544 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 21:36:02,498 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-02 21:36:02,502 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-02 21:36:02,502 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-02 21:37:18,527 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 21:37:18,532 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 21:37:18,533 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 21:37:18,534 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 21:37:18,534 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 21:37:22,036 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-02 21:37:22,037 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-02 21:37:22,038 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 21:37:22,040 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:37:32,288 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:37:32,293 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 21:37:33,188 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 21:41:02,560 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-02 21:41:02,577 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-02-02 21:41:03,004 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-02 21:41:03,005 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-02 21:42:22,563 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 21:42:22,564 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 21:42:22,565 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 21:42:22,566 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 21:42:22,567 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 21:42:26,520 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-02 21:42:26,521 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-02 21:42:26,522 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 21:42:26,522 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:42:37,028 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 21:42:37,034 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 21:42:37,961 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 23:00:38,188 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-02 23:00:38,209 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-02 23:00:38,211 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-02 23:00:39,425 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-02 23:00:39,426 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-02 23:03:36,439 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 23:03:36,441 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 23:03:36,446 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 23:03:36,447 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 23:03:36,447 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 23:03:38,443 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-02 23:03:38,445 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-02 23:03:38,446 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 23:03:38,447 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 23:03:48,603 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 23:03:48,610 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 23:03:49,438 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-02 23:24:37,835 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-02 23:24:37,842 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-02 23:24:37,849 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-02 23:24:37,849 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-02 23:24:37,850 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-02 23:24:39,778 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-02 23:24:39,779 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 23:24:49,851 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-02 23:24:49,866 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-02 23:24:50,734 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-03 00:11:02,914 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-03 00:11:02,922 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-03 00:11:02,933 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-03 00:11:02,934 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-03 00:11:02,935 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-03 00:11:07,260 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-03 00:11:07,263 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-03 00:11:17,368 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-03 00:11:17,372 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-03 00:11:18,253 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-03 00:13:54,541 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-03 00:13:54,551 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-02-03 00:13:55,249 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-03 00:13:55,251 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-03 00:14:01,464 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-03 00:14:01,464 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-03 00:14:01,465 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-03 00:14:01,466 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-03 00:14:01,467 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-03 00:14:04,845 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-03 00:14:04,846 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-03 00:14:04,846 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-03 00:14:04,848 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-03 00:14:15,052 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-03 00:14:15,060 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-03 00:14:16,006 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 05:27:38,897 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 05:27:38,897 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 05:27:38,898 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 05:27:38,899 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 05:27:49,148 | MainThread   | [INFO    ] | _get_ble_device     |: Found 0 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:46:06,615 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 06:46:06,619 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:46:16,686 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:46:16,692 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 06:46:20,535 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 06:53:46,648 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-10 06:53:46,653 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-10 06:53:46,654 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-10 06:53:50,725 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 06:53:50,725 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 06:53:50,726 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 06:53:50,727 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:54:00,858 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:54:00,866 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 06:54:04,604 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 06:54:55,403 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-10 06:54:55,412 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-02-10 06:54:55,541 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-10 06:54:55,541 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-10 06:55:00,429 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 06:55:00,429 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 06:55:00,430 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 06:55:00,430 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:55:10,560 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 06:55:10,568 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 06:55:14,235 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 07:00:40,956 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 07:00:40,957 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:00:51,005 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:00:51,015 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 07:00:54,706 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 07:19:01,243 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 07:19:01,253 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:19:11,340 | MainThread   | [INFO    ] | _get_ble_device     |: Found 0 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:19:55,936 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 07:19:55,938 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:20:06,000 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:20:06,002 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 07:20:09,680 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 07:26:49,618 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-10 07:26:49,634 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-10 07:26:49,634 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-10 07:26:50,127 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-10 07:26:50,128 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-10 07:27:43,625 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 07:27:43,625 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 07:27:43,626 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 07:27:43,626 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:27:53,878 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:27:53,884 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 07:27:57,593 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 07:37:00,662 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-10 07:37:00,687 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-02-10 07:37:06,880 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 07:37:06,881 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 07:37:06,881 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 07:37:06,882 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:37:17,033 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 07:37:17,056 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 07:37:20,966 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 14:41:29,361 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-10 14:41:29,364 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-10 14:41:29,365 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-10 14:41:29,365 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-10 14:41:29,366 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-10 14:41:33,229 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 14:41:33,230 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 14:41:33,231 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 14:41:33,232 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 14:41:43,401 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 14:41:43,409 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 14:41:44,355 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 14:42:01,791 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-10 14:42:01,795 | MainThread   | [INFO    ] | exit_handler        |: Gracefully Exiting
+2026-02-10 14:42:01,953 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-10 14:42:01,954 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-10 14:42:22,357 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-10 14:42:22,358 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-10 14:42:22,358 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 14:42:22,359 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 14:42:32,564 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 14:42:32,573 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 14:42:33,584 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-10 14:46:22,141 | MainThread   | [DEBUG   ] | <module>            |: debug
+2026-02-10 14:46:22,144 | MainThread   | [INFO    ] | <module>            |: info
+2026-02-10 14:46:22,147 | MainThread   | [WARNING ] | <module>            |: warning
+2026-02-10 14:46:22,147 | MainThread   | [ERROR   ] | <module>            |: error
+2026-02-10 14:46:22,148 | MainThread   | [CRITICAL] | <module>            |: critical
+2026-02-10 14:46:25,728 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-10 14:46:25,728 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 14:46:35,791 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-10 14:46:35,799 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-10 14:46:36,944 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-11 07:53:04,982 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-11 07:53:05,031 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-11 07:53:05,031 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-11 07:53:12,768 | MainThread   | [DEBUG   ] | __init__            |: Python Info: sys.version_info(major=3, minor=13, micro=11, releaselevel='final', serial=0)
+2026-02-11 07:53:12,769 | MainThread   | [DEBUG   ] | __init__            |: System Info: macOS-26.2-arm64-arm-64bit-Mach-O
+2026-02-11 07:53:12,769 | MainThread   | [INFO    ] | _connect            |: Looking for Artemis Nano Peripheral Device: c0:81:b4:24:2b:64
+2026-02-11 07:53:12,769 | MainThread   | [INFO    ] | _get_ble_device     |: Scanning for device with address: c0:81:b4:24:2b:64, service UUID: 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-11 07:53:22,899 | MainThread   | [INFO    ] | _get_ble_device     |: Found 1 device(s) advertising service 15bb5de7-5941-4ba2-bda0-784bb8817a1b
+2026-02-11 07:53:22,904 | MainThread   | [INFO    ] | _get_ble_device     |: Selecting device: 38645F53-E5BF-2155-7DF0-DBDE5B0B8B54 (name: Artemis BLE)
+2026-02-11 07:53:24,098 | MainThread   | [INFO    ] | _connect            |: Connected to c0:81:b4:24:2b:64
+2026-02-11 07:57:55,882 | MainThread   | [INFO    ] | _connect            |: Already connected to a BLE device
+2026-02-12 09:10:10,623 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-12 09:10:10,635 | MainThread   | [INFO    ] | exit_handler        |: Exiting...
+2026-02-12 09:10:10,649 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-12 09:10:10,652 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-12 09:10:10,694 | MainThread   | [WARNING ] | exit_handler        |: Could not disconnect before exiting
+2026-02-12 09:10:10,695 | MainThread   | [WARNING ] | exit_handler        |: Not connected to a BLE device
+2026-02-12 09:10:11,620 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-12 09:10:11,622 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device
+2026-02-12 09:10:12,051 | MainThread   | [WARNING ] | __del__             |: Could not delete BaseBLEController instance before exiting
+2026-02-12 09:10:12,052 | MainThread   | [WARNING ] | __del__             |: Not connected to a BLE device

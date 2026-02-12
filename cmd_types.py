@@ -1,0 +1,34 @@
+from enum import Enum
+
+class CMD(Enum): # lab 1
+    PING = 0
+    SEND_TWO_INTS = 1
+    SEND_THREE_FLOATS = 2
+    ECHO = 3
+    DANCE = 4
+    SET_VEL = 5
+    GET_TIME_MILLIS = 6
+    GET_CURRRENT_TIME_LOOP = 7
+    STORE_TIME_STAMP = 8
+    SEND_TIME_DATA = 9
+    STORE_TIME_TEMP_STAMP = 10
+    GET_TEMP_READINGS = 11
+
+class CMD_lab2(Enum):
+    PING = 0
+    ECHO = 1
+    GET_TIME_MILLIS = 2
+    GET_CURRRENT_TIME_LOOP = 3
+    STORE_TIME_STAMP = 4
+    SEND_TIME_DATA = 5
+    STORE_TIME_TEMP_STAMP = 6
+    GET_TEMP_READINGS = 7
+    GET_ACCEL_DATA = 8
+    GET_ACCEL_NOISE = 9
+    GET_GYRO_DATA = 10
+    GET_COMPL_DATA = 11
+
+
+class CMD_lab3(Enum):
+    PING = 0
+    
