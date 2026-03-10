@@ -7,15 +7,19 @@
 
 
 // Motor 2 (left) pins
+#define MOTOR2_IN_PLUS A2
+#define MOTOR2_IN_MINUS 4
 
 
-int pwm_speed = 150; // PWM value 0-255
+int pwm_speed = 100; // PWM value 0-255
 
 void setup() {
   Serial.begin(115200);
   // Set as output (from Artemis, input to motor controller)
   pinMode(MOTOR1_IN_PLUS, OUTPUT);
   pinMode(MOTOR1_IN_MINUS, OUTPUT);
+  pinMode(MOTOR2_IN_PLUS, OUTPUT);
+  pinMode(MOTOR2_IN_MINUS, OUTPUT);
 }
 
 void loop() {
@@ -45,15 +49,21 @@ void loop() {
 void forward(int speed) {
   analogWrite(MOTOR1_IN_PLUS, speed);
   analogWrite(MOTOR1_IN_MINUS, 0);
+  analogWrite(MOTOR2_IN_PLUS, speed*1.9);
+  analogWrite(MOTOR2_IN_MINUS, 0);
 }
 
 void backward(int speed) {
   analogWrite(MOTOR1_IN_PLUS, 0);
   analogWrite(MOTOR1_IN_MINUS, speed);
+  analogWrite(MOTOR2_IN_PLUS, 0);
+  analogWrite(MOTOR2_IN_MINUS, speed*1.9);
 }
 
 // movement functions
 void stop() {
   analogWrite(MOTOR1_IN_PLUS, 0);
   analogWrite(MOTOR1_IN_MINUS, 0);
+  analogWrite(MOTOR2_IN_PLUS, 0);
+  analogWrite(MOTOR2_IN_MINUS, 0);
 }
