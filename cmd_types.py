@@ -28,7 +28,28 @@ class CMD_lab2(Enum):
     GET_GYRO_DATA = 10
     GET_COMPL_DATA = 11
 
-
 class CMD_lab3(Enum):
-    PING = 0
+    GET_2TOF_DATA = 0
+    GET_IMU_DATA = 1
+    GET_2TOF_IMU_TIME_DATA = 2
+
+
+class CMD_lab5(Enum):
+    START_LINEAR_PID = 0
+    STOP_LINEAR_PID = 1
+    SEND_LINEAR_PID_DATA = 2
+
+class CMD_lab6(Enum):
+    # Lab 5 - linear pid
+    START_LINEAR_PID = 0
+    STOP_LINEAR_PID = 1
+    SEND_LINEAR_PID_DATA = 2
+    # Lab 6 - orientation pid
+    START_ORIENTATION_PID = 3
+    STOP_ORIENTATION_PID = 4
+    SEND_ORIENTATION_PID_DATA = 5
+    SET_ORIENTATION_SETPOINT = 6
+    RESET_YAW = 7
+    
+    
     
