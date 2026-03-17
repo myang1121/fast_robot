@@ -117,21 +117,21 @@ BLEFloatCharacteristic  tx_characteristic_float(BLE_UUID_TX_FLOAT, BLERead | BLE
 BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | BLENotify, MAX_MSG_SIZE);
 
 ////////////////////////////////////////////////////////// Lab 5 - Linear PID //////////////////////////////////
-#define SETPOINT 304 // 304mm = 1ft, expected distance
+#define LINEAR_SETPOINT 304 // 304mm = 1ft, expected distance
 #define MIN_SPEED 0
 #define MAX_SPEED 255
-float Kp = 0.5;
-float Ki = 0.0;
-float Kd = 0.0;
-int error = 0;
-int sum_error = 0;
-int previous_error = 0;
-int derivative_error = 0;
-int control_speed = 0;
-bool pid_running = false;
+float linear_Kp = 0.5;
+float linear_Ki = 0.0;
+float linear_Kd = 0.0;
+int linear_error = 0;
+int linear_sum_error = 0;
+int linear_previous_error = 0;
+int linear_derivative_error = 0;
+int linear_control_speed = 0;
+bool linear_pid_running = false;
 
-// PID Controller w/ only proportional term (Kp)
-void runPIDController() {
+// Linear PID Controller w/ only proportional term (Kp)
+void runLinearPIDController() {
   // Continuously take a fresh ranging measurement
   // for liner PID, use sensor 1 only
   sensor1.startRanging();
@@ -142,33 +142,33 @@ void runPIDController() {
   sensor1.clearInterrupt();
   sensor1.stopRanging();
 
-  error = distance1 - SETPOINT;
-  control_speed = (int)(Kp*abs(error)); // comment out when add I & D
+  linear_error = distance1 - LINEAR_SETPOINT;
+  linear_control_speed = (int)(linear_Kp*abs(linear_error)); // comment out when add I & D
   
   /* for I & D
-  sum_error = sum_error + error;
-  derivative_error = error - previous_error;
-  control_speed = (int)(Kp*error + Ki*sum_error + Kd*derivative_error);
-  previous_error = error;
+  linear_sum_error = linear_sum_error + linear_error;
+  linear_derivative_error = linear_error - linear_previous_error;
+  linear_control_speed = (int)(linear_Kp*linear_error + linear_Ki*linear_sum_error + linear_Kd*linear_derivative_error);
+  linear_previous_error = linear_error;
   */
 
-  control_speed = constrain(control_speed, MIN_SPEED, MAX_SPEED);
+  linear_control_speed = constrain(linear_control_speed, MIN_SPEED, MAX_SPEED);
 
   ////////////// Collect data ////////////////////////////////////
   if (arr_index < ARRAY_SIZE) {
     T_arr[arr_index] = millis();
     Measured_distance_arr[arr_index] = distance1;
-    Error_arr[arr_index] = error;
-    Control_speed_arr[arr_index] = control_speed;
+    Error_arr[arr_index] = linear_error;
+    Control_speed_arr[arr_index] = linear_control_speed;
     arr_index++;
   }
   
-  if (abs(error) < 20) { // comment out when add I & D
+  if (abs(linear_error) < 20) { // comment out when add I & D
     stop();
-  } else if (error > 0) {
-    forward(control_speed);
+  } else if (linear_error > 0) {
+    forward(linear_control_speed);
   } else {
-    backward(control_speed);
+    backward(linear_control_speed);
   }
 }
 
@@ -177,9 +177,9 @@ RobotCommand robot_cmd(":|");
 EString tx_estring_value;
 // Commands
 enum CommandTypes {
-    START_PID,
-    STOP_PID,
-    SEND_PID_DATA,
+    START_LINEAR_PID,
+    STOP_LINEAR_PID,
+    SEND_LINEAR_PID_DATA,
 };
 // Case statement to handle commands
 void handle_command() {
@@ -192,18 +192,18 @@ void handle_command() {
     if (!success) return;
 
     switch (cmd_type) {
-      case START_PID:
-        Serial.println("Start PID!");
-        pid_running = true;
+      case START_LINEAR_PID:
+        Serial.println("Start linear PID!");
+        linear_pid_running = true;
         break;
 
-      case STOP_PID:
-        Serial.println("Stop PID!");
-        pid_running = false;
+      case STOP_LINEAR_PID:
+        Serial.println("Stop linear PID!");
+        linear_pid_running = false;
         stop(); // stop motors
         break;
 
-      case SEND_PID_DATA:
+      case SEND_LINEAR_PID_DATA:
         Serial.println("Sending debugging data!");
         for (int i = 0; i < arr_index; i++) {
           tx_estring_value.clear();
@@ -299,12 +299,12 @@ void loop() {
       if (rx_characteristic_string.written()) {
           handle_command();
       }
-      if (pid_running) {
-        runPIDController();
+      if (linear_pid_running) {
+        runLinearPIDController();
       }
     }
     stop();
-    pid_running = false;
+    linear_pid_running = false;
     Serial.println("Disconnected from central");
     Serial.println("Hardstop, stopping motors");
   }
