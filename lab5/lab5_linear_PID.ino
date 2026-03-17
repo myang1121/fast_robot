@@ -1,5 +1,5 @@
 // Lab 5 - Linear PID control and Linear interpolation
-// this test program tests the car's ability to move forward for about 1m, backward for about 1m, rotate CCW for 180 degrees, and rotate CCW for 360 degrees. 
+// this test program tests the car's ability to move forward as fast as possible, and stop 1ft (304mm) away from wall
 
 ////////////////////////////////////////////////////////// Lab 4 - Motor Control //////////////////////////////////
 // Motor 1 (right, front view) pins
@@ -82,20 +82,24 @@ SFEVL53L1X sensor2; // side
 int distance1 = 0;
 int distance2 = 0;
 
-////////////////////////////////////////////////////////// Lab 1 - BLE //////////////////////////////////
+////////////////////////////////////////////////////////// Data Collection //////////////////////////////////
 // For sending data over ble to python 
 // Debugging data
 // ToF
-const int ARRAY_SIZE = 100;
-unsigned long Distance1_arr[ARRAY_SIZE]; 
-unsigned long Distance2_arr[ARRAY_SIZE]; 
+const int ARRAY_SIZE = 500;
+int Measured_distance_arr[ARRAY_SIZE]; 
+int Error_arr[ARRAY_SIZE]; 
+int Control_speed_arr[ARRAY_SIZE]; 
 // IMU (for lab 6, orientation control)
 unsigned long Roll_arr[ARRAY_SIZE]; 
 unsigned long Pitch_arr[ARRAY_SIZE]; 
 unsigned long Yaw_arr[ARRAY_SIZE]; 
 // Timestamp
 unsigned long T_arr[ARRAY_SIZE]; 
-unsigned long millisTime;
+// Array index
+int arr_index = 0;
+
+////////////////////////////////////////////////////////// Lab 1 - BLE //////////////////////////////////
 // BLE libraries
 #include "BLECStringCharacteristic.h"
 #include "EString.h"
@@ -149,6 +153,15 @@ void runPIDController() {
   */
 
   control_speed = constrain(control_speed, MIN_SPEED, MAX_SPEED);
+
+  ////////////// Collect data ////////////////////////////////////
+  if (arr_index < ARRAY_SIZE) {
+    T_arr[arr_index] = millis();
+    Measured_distance_arr[arr_index] = distance1;
+    Error_arr[arr_index] = error;
+    Control_speed_arr[arr_index] = control_speed;
+    arr_index++;
+  }
   
   if (abs(error) < 20) { // comment out when add I & D
     stop();
@@ -166,6 +179,7 @@ EString tx_estring_value;
 enum CommandTypes {
     START_PID,
     STOP_PID,
+    SEND_PID_DATA,
 };
 // Case statement to handle commands
 void handle_command() {
@@ -187,6 +201,27 @@ void handle_command() {
         Serial.println("Stop PID!");
         pid_running = false;
         stop(); // stop motors
+        break;
+
+      case SEND_PID_DATA:
+        Serial.println("Sending debugging data!");
+        for (int i = 0; i < arr_index; i++) {
+          tx_estring_value.clear();
+
+          tx_estring_value.append("T:"); // timestamp
+          tx_estring_value.append((int)T_arr[i]);
+          tx_estring_value.append("|D:"); // measured distance from ToF sensor reading
+          tx_estring_value.append(Measured_distance_arr[i]);
+          tx_estring_value.append("|E:"); // error (distance difference of expected/desire and measured distance)
+          tx_estring_value.append(Error_arr[i]);
+          tx_estring_value.append("|C:"); // motor control speed
+          tx_estring_value.append(Control_speed_arr[i]);
+          
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+          delay(10); // to make sure computer receive all data from BLE
+        }
+        Serial.print("Finish sending debugging data!");
+        arr_index = 0; // for next run
         break;
 
       default:
