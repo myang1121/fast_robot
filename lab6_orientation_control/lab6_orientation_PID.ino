@@ -3,6 +3,19 @@
 // control signal --> differential drive (rotateCW/ rotateCCW)
 // PID input --> integrated gyroscope yaw
 
+////////////////////////////////////////////////////////// Libraries - all includes //////////////////////////////////
+// ToF Sensor Libraries
+#include <Wire.h>
+#include "SparkFun_VL53L1X.h"
+// IMU Sensor Libraries
+#include "ICM_20948.h" // Click here to get the library: http://librarymanager/All#SparkFun_ICM_20948_IMU
+#include "math.h" // to use atan2 and M_PI
+// BLE libraries
+#include "BLECStringCharacteristic.h"
+#include "EString.h"
+#include "RobotCommand.h"
+#include <ArduinoBLE.h>
+
 ////////////////////////////////////////////////////////// Lab 4 - Motor Control //////////////////////////////////
 // Motor 1 (right, front view) pins
 #define MOTOR1_IN_PLUS 12
@@ -67,9 +80,6 @@ void rotateCW(int speed) {
 }
 
 ////////////////////////////////////////////////////////// Lab 2 - IMU Sensor Reading //////////////////////////////////
-#include "ICM_20948.h" // Click here to get the library: http://librarymanager/All#SparkFun_ICM_20948_IMU
-#include "math.h" // to use atan2 and M_PI
-
 // I2C Macros
 #define WIRE_PORT Wire // Your desired Wire port.      Used when "USE_SPI" is not defined
 // The value of the last bit of the I2C address.
@@ -79,21 +89,44 @@ void rotateCW(int speed) {
 // ICM_20948_I2C object
 ICM_20948_I2C myICM;
 
-// variables for converting gyro_reading (angular change) to roll, pitch, yaw (angles)
-float gyro_roll = 0.0;
-float gyro_pitch = 0.0;
+// // variables for converting gyro_reading (angular change) to roll, pitch, yaw (angles)
+// gyro yaw integration
 float gyro_yaw = 0.0;
+float gyro_z_bias = 0.0; // measured at rest, subtracted each step
 unsigned long last_time = 0;
 float dt = 0.0;
 
-// variables for complementary filter
-float accel_gain = 0.1; // initialized to 0.5, 50 percent weight on accel, 50 percent weight on gyro
-float gyro_gain = 1. - accel_gain;
-float compl_roll = 0.0;
-float compl_pitch = 0.0;
-float compl_yaw = 0.0; // equal gyro_yaw
-
 ////////////// IMU Functions ////////////////////////////////////
+// to get accel, gyro, compl value
+// convert accelerometer data into pitch and roll, update accel_roll and accel_pitch globals
+// read gyro, integrate yaw, update gyro_yaw global
+void updateGyroYaw() {
+  unsigned long now = millis();
+  dt = (now - last_time)/1000.0; // ms -> seconds
+  last_time = now;
+  // subtract bias to reduce drift
+  float gyro_z_corrected = myICM.gyrZ() - gyro_z_bias;
+  gyro_yaw += gyro_z_corrected*dt;
+}
+
+// call this at startup with robot perfectly still for ~2s to measure bias
+void calibrateGyroBias() {
+  Serial.println("Calibrating gyro bias, keeping robot still...");
+  float sum = 0.0;
+  int samples = 200;
+  for (int i = 0; i < samples; i++) {
+    while (!myICM.dataReady()) {
+      delay(1);
+    }
+    myICM.getAGMT();
+    sum += myICM.gyrZ();
+    delay(10);
+  }
+   gyro_z_bias = sum/samples;
+  Serial.print("Gyro Z bias: ");
+  Serial.println(gyro_z_bias);
+}
+
 // to print data nicely
 void printPaddedInt16b(int16_t val)
 {
@@ -232,39 +265,8 @@ void printScaledAGMT(ICM_20948_I2C *sensor)
   Serial.print(" ]");
   Serial.println();
 }
-// to get accel, gyro, compl value
-// convert accelerometer data into pitch and roll, update accel_roll and accel_pitch globals
-void updateAccelPitchRoll() {
-  // get a_x, a_y, a_z, accelerometer raw readings, but as floats
-  float a_x = myICM.accX();
-  float a_y = myICM.accY();
-  float a_z = myICM.accZ();
-  // calculate roll and pitch using atan2
-  accel_roll = atan2(a_y, a_z) * 180.0 / M_PI; // atan2 returns radian --> convert to degrees using M_PI
-  accel_pitch = atan2(a_x, a_z) * 180.0 / M_PI;
-}
-
-// Use a complementary filter to compute an estimate of pitch and roll that is both accurate (increase accel_gain reduce drift) and stable (increase gyro gain reduce vibration)
-// gyro_gain = 1 - accel_gain
-void updateGyroRollPitchYaw() {
-  unsigned long now = millis();
-  dt = (now - last_time) / 1000.0;  // ms -> seconds
-  last_time = now;
-  // calculate roll, pitch, and yaw (convert gyro_reading to angles in degrees)
-  gyro_roll = gyro_roll + myICM.gyrX()*dt;
-  gyro_pitch = gyro_pitch + myICM.gyrY()*dt;
-  gyro_yaw = gyro_yaw + myICM.gyrZ()*dt; // no complementary data from accelerometer
-}
-
-void updateComplRollPitchYaw() {
-  compl_roll = gyro_gain*(compl_roll + myICM.gyrX()*dt) + accel_gain*(accel_roll);
-  compl_pitch = gyro_gain*(compl_pitch + myICM.gyrY()*dt) + accel_gain*(accel_pitch);
-  compl_yaw = gyro_yaw;
-}
 
 ////////////////////////////////////////////////////////// Lab 3 - ToF Sensor Reading //////////////////////////////////
-#include <Wire.h>
-#include "SparkFun_VL53L1X.h"
 // ToF Declarations & Variables
 // Two sensor objects
 SFEVL53L1X sensor1; // front
@@ -287,23 +289,16 @@ int distance2 = 0;
 // ToF
 const int ARRAY_SIZE = 500;
 int Measured_distance_arr[ARRAY_SIZE]; 
-int Error_arr[ARRAY_SIZE]; 
-int Control_speed_arr[ARRAY_SIZE]; 
+float Error_arr[ARRAY_SIZE]; 
+float Control_speed_arr[ARRAY_SIZE]; 
 // IMU (for lab 6, orientation control)
-unsigned long Roll_arr[ARRAY_SIZE]; 
-unsigned long Pitch_arr[ARRAY_SIZE]; 
-unsigned long Yaw_arr[ARRAY_SIZE]; 
+float Yaw_arr[ARRAY_SIZE]; 
 // Timestamp
 unsigned long T_arr[ARRAY_SIZE]; 
 // Array index
 int arr_index = 0;
 
 ////////////////////////////////////////////////////////// Lab 1 - BLE //////////////////////////////////
-// BLE libraries
-#include "BLECStringCharacteristic.h"
-#include "EString.h"
-#include "RobotCommand.h"
-#include <ArduinoBLE.h>
 // BLE UUIDs
 #define BLE_UUID_TEST_SERVICE "15bb5de7-5941-4ba2-bda0-784bb8817a1b"
 #define BLE_UUID_RX_STRING "9750f60b-9c9c-4158-b620-02ec9521cd99"
@@ -316,21 +311,21 @@ BLEFloatCharacteristic  tx_characteristic_float(BLE_UUID_TX_FLOAT, BLERead | BLE
 BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | BLENotify, MAX_MSG_SIZE);
 
 ////////////////////////////////////////////////////////// Lab 5 - Linear PID //////////////////////////////////
-#define SETPOINT 304 // 304mm = 1ft, expected distance
+#define LINEAR_SETPOINT 304 // 304mm = 1ft, expected distance
 #define MIN_SPEED 0
 #define MAX_SPEED 255
-float Kp = 0.5;
-float Ki = 0.0;
-float Kd = 0.0;
-int error = 0;
-int sum_error = 0;
-int previous_error = 0;
-int derivative_error = 0;
-int control_speed = 0;
-bool pid_running = false;
+float linear_Kp = 0.5;
+float linear_Ki = 0.0;
+float linear_Kd = 0.0;
+int linear_error = 0;
+int linear_sum_error = 0;
+int linear_previous_error = 0;
+int linear_derivative_error = 0;
+int linear_control_speed = 0;
+bool linear_pid_running = false;
 
-// PID Controller w/ only proportional term (Kp)
-void runPIDController() {
+// Linear PID Controller w/ only proportional term (Kp)
+void runLinearPIDController() {
   // Continuously take a fresh ranging measurement
   // for liner PID, use sensor 1 only
   sensor1.startRanging();
@@ -341,33 +336,86 @@ void runPIDController() {
   sensor1.clearInterrupt();
   sensor1.stopRanging();
 
-  error = distance1 - SETPOINT;
-  control_speed = (int)(Kp*abs(error)); // comment out when add I & D
+  linear_error = distance1 - LINEAR_SETPOINT;
+  linear_control_speed = (int)(linear_Kp*abs(linear_error)); // comment out when add I & D
   
   /* for I & D
-  sum_error = sum_error + error;
-  derivative_error = error - previous_error;
-  control_speed = (int)(Kp*error + Ki*sum_error + Kd*derivative_error);
-  previous_error = error;
+  linear_sum_error = linear_sum_error + linear_error;
+  linear_derivative_error = linear_error - linear_previous_error;
+  linear_control_speed = (int)(linear_Kp*linear_error + linear_Ki*linear_sum_error + linear_Kd*linear_derivative_error);
+  linear_previous_error = linear_error;
   */
 
-  control_speed = constrain(control_speed, MIN_SPEED, MAX_SPEED);
+  linear_control_speed = constrain(linear_control_speed, MIN_SPEED, MAX_SPEED);
 
   ////////////// Collect data ////////////////////////////////////
   if (arr_index < ARRAY_SIZE) {
     T_arr[arr_index] = millis();
     Measured_distance_arr[arr_index] = distance1;
-    Error_arr[arr_index] = error;
-    Control_speed_arr[arr_index] = control_speed;
+    Error_arr[arr_index] = linear_error;
+    Control_speed_arr[arr_index] = linear_control_speed;
     arr_index++;
   }
-  
-  if (abs(error) < 20) { // comment out when add I & D
+  // drive motors based on sign of error
+  if (abs(linear_error) < 20) { // comment out when add I & D
     stop();
-  } else if (error > 0) {
-    forward(control_speed);
+  } else if (linear_error > 0) {
+    // measured distance less than target
+    forward(linear_control_speed);
   } else {
-    backward(control_speed);
+    // measured distance greater than target
+    backward(linear_control_speed);
+  }
+}
+
+////////////////////////////////////////////////////////// Lab 6 - Orientation PID //////////////////////////////////
+float orientation_setpoint = 0.0; // target yaw rotation angle set by ble
+float orientation_Kp = 2.0;
+float orientation_Ki = 0.0;
+float orientation_Kd = 0.0;
+float orientation_error = 0;
+float orientation_sum_error = 0;
+float orientation_control_speed = 0;
+bool orientation_pid_running = false;
+
+#define YAW_DEADZONE 2 // stop correcting if within +/- 2°
+
+void runOrientationPIDController() {
+  // update yaw estimate from gyro
+  if (myICM.dataReady()) {
+    myICM.getAGMT();
+    updateGyroYaw();
+  }
+  orientation_error = orientation_setpoint - gyro_yaw;
+  // P term only
+  orientation_control_speed = orientation_Kp * abs(orientation_error);
+
+  /* w/ I & D
+  orientation_sum_error += orientation_error;
+  // Kd uses raw gyro directly (derivative of yaw = gyro reading)
+  // this avoids derivative kick since not differencing error
+  float gyro_z_corrected = myICM.gyrZ() - gyro_z_bias;
+  orientation_control_speed = (int)(orientation_Kp*orientation_error + orientation_Ki*orientation_sum_error - orientation_Kd*gyro_z_corrected);
+  */
+  orientation_control_speed = constrain(orientation_control_speed, MIN_SPEED, MAX_SPEED);
+
+  ////////////// Collect data ////////////////////////////////////
+  if (arr_index < ARRAY_SIZE) {
+    T_arr[arr_index] = millis();
+    Yaw_arr[arr_index] = gyro_yaw;
+    Error_arr[arr_index] = orientation_error;
+    Control_speed_arr[arr_index] = orientation_control_speed;
+    arr_index++;
+  }
+  // drive motors based on sign of error
+  if (abs(orientation_error) < YAW_DEADZONE) { // comment out when add I & D
+    stop();
+  } else if (orientation_error > 0) {
+    // yaw less than target --> rotate CW to increase yaw
+    rotateCW(orientation_control_speed);
+  } else {
+    // yaw greater than target --> rotate CCW to decrease yaw
+    rotateCCW(orientation_control_speed);
   }
 }
 
@@ -376,9 +424,16 @@ RobotCommand robot_cmd(":|");
 EString tx_estring_value;
 // Commands
 enum CommandTypes {
-    START_PID,
-    STOP_PID,
-    SEND_PID_DATA,
+    // Lab 5 - linear pid
+    START_LINEAR_PID,
+    STOP_LINEAR_PID,
+    SEND_LINEAR_PID_DATA,
+    // Lab 6 - orinetation pid
+    START_ORIENTATION_PID,
+    STOP_ORIENTATION_PID,
+    SEND_ORIENTATION_PID_DATA,
+    SET_ORIENTATION_SETPOINT, // update orientation_setpoint while running
+    RESET_YAW, // zero out gyro_yaw, re-reference current angle, definding zero point at current boot up physical position
 };
 // Case statement to handle commands
 void handle_command() {
@@ -391,18 +446,18 @@ void handle_command() {
     if (!success) return;
 
     switch (cmd_type) {
-      case START_PID:
+      case START_LINEAR_PID:
         Serial.println("Start PID!");
-        pid_running = true;
+        linear_pid_running = true;
         break;
 
-      case STOP_PID:
+      case STOP_LINEAR_PID:
         Serial.println("Stop PID!");
-        pid_running = false;
+        linear_pid_running = false;
         stop(); // stop motors
         break;
 
-      case SEND_PID_DATA:
+      case SEND_LINEAR_PID_DATA:
         Serial.println("Sending debugging data!");
         for (int i = 0; i < arr_index; i++) {
           tx_estring_value.clear();
@@ -423,6 +478,56 @@ void handle_command() {
         arr_index = 0; // for next run
         break;
 
+      case START_ORIENTATION_PID:
+        Serial.println("Start Orientation PID!");
+        orientation_sum_error = 0;
+        arr_index = 0;
+        orientation_pid_running = true;
+        break;
+
+      case STOP_ORIENTATION_PID:
+        Serial.println("Stop Orientation PID!");
+        orientation_pid_running = false; 
+        stop(); // stop motors
+        break;
+      
+      case SEND_ORIENTATION_PID_DATA:
+        Serial.println("Sending orientation debugging data!");
+        for (int i = 0; i < arr_index; i++) {
+          tx_estring_value.clear();
+
+          tx_estring_value.append("T:"); // timestamp
+          tx_estring_value.append((int)T_arr[i]);
+          tx_estring_value.append("|Y:"); // measured distance from ToF sensor reading
+          tx_estring_value.append((float)Yaw_arr[i]);
+          tx_estring_value.append("|E:"); // error (distance difference of expected/desire and measured distance)
+          tx_estring_value.append(Error_arr[i]);
+          tx_estring_value.append("|C:"); // motor control speed
+          tx_estring_value.append(Control_speed_arr[i]);
+          
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+          delay(10); // to make sure computer receive all data from BLE
+        }
+        Serial.print("Finish sending debugging data!");
+        arr_index = 0; // for next run
+        break;
+      case SET_ORIENTATION_SETPOINT: { // add curly bracket b/c define variable in case statement
+        float new_setpoint;
+        success = robot_cmd.get_next_value(new_setpoint);
+        if (success) {
+          orientation_setpoint = new_setpoint;
+          Serial.print("New orientation setpoint: ");
+          Serial.println(orientation_setpoint);
+        }
+        break;
+      }
+      case RESET_YAW:
+        gyro_yaw = 0.0;
+        orientation_setpoint = 0.0;
+        orientation_sum_error = 0;
+        Serial.println("Yaw reset to 0");
+        break;
+
       default:
         Serial.print("Invalid Command Type: ");
         Serial.println(cmd_type);
@@ -434,8 +539,7 @@ void handle_command() {
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin(); // start I2C
-  Serial.println("VL53L1X Qwiic Test");
+  Serial.println("Lab 6 - Orientation PID");
   ////////////// BLE Setup /////////////////////////////
   BLE.begin();
   BLE.setDeviceName("Artemis BLE");
@@ -455,7 +559,7 @@ void setup() {
 
   ////////////// IMU Sensor Setup /////////////////////////////
   // i2c setup
-  WIRE_PORT.begin();
+  WIRE_PORT.begin(); // start I2C
   WIRE_PORT.setClock(400000);
   //myICM.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
   bool initialized = false;
@@ -464,7 +568,7 @@ void setup() {
     // begin i2c
     myICM.begin(WIRE_PORT, AD0_VAL);
 
-    Serial.print(F("Initialization of the sensor returned: "));
+    Serial.print(F("Initialization of IMU sensor returned: "));
     Serial.println(myICM.statusString());
     if (myICM.status != ICM_20948_Stat_Ok)
     {
@@ -476,10 +580,10 @@ void setup() {
       initialized = true;
     }
   }
-  myICM.getAGMT();
-  updateAccelPitchRoll();
-  accel_roll_lpf  = accel_roll;
-  accel_pitch_lpf = accel_pitch;
+  Serial.println("IMU sensor ready!");
+  
+  calibrateGyroBias(); // robot still
+  last_time = millis(); // initialize last_time 
 
   ////////////// 2 ToF Sensor Setup /////////////////////////////
   pinMode(XSHUT_Sensor2, OUTPUT);
@@ -504,7 +608,7 @@ void setup() {
   // default mode long, so no extra call needed, but just in case, call explicitly:
   sensor1.setDistanceModeLong();
   sensor2.setDistanceModeLong();
-  Serial.println("Both sensors ready!");
+  Serial.println("Both ToF sensors ready!");
   ////////////// 2 Motor Setup ////////////////////////////////////
   // Set as output (from Artemis, input to motor controller)
   pinMode(MOTOR1_IN_PLUS, OUTPUT);
@@ -527,20 +631,16 @@ void loop() {
       if (rx_characteristic_string.written()) {
           handle_command();
       }
-      if (pid_running) {
-        runPIDController();
+      if (linear_pid_running) {
+        runLinearPIDController();
       }
-      if (myICM.dataReady()) {
-        myICM.getAGMT();         // The values are only updated when you call 'getAGMT'
-        //printRawAGMT( myICM.agmt );     // Uncomment this to see the raw values, taken directly from the agmt structure
-        printScaledAGMT(&myICM); // This function takes into account the scale settings from when the measurement was made to calculate the values with units
-        updateAccelPitchRoll(); // get roll and pitch original signal from raw accelerometer reading (float a_x, a_y, a_z)
-        updateGyroRollPitchYaw(); // get roll, pitch, yaw original signal from raw gyroscope reading (float g_x, g_y, g_z)
-        updateComplRollPitchYaw();
+      if (orientation_pid_running) {
+        runOrientationPIDController();
       }
     }
     stop();
-    pid_running = false;
+    linear_pid_running = false;
+    orientation_pid_running = false;
     Serial.println("Disconnected from central");
     Serial.println("Hardstop, stopping motors");
   }
