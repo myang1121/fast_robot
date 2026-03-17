@@ -68,8 +68,8 @@ void rotateCW(int speed) {
 #include "SparkFun_VL53L1X.h"
 // ToF Declarations & Variables
 // Two sensor objects
-SFEVL53L1X sensor1;
-SFEVL53L1X sensor2;
+SFEVL53L1X sensor1; // front
+SFEVL53L1X sensor2; // side
 
 // Only sensor 2 has XSHUT, connected to Artemis Nano A0 pin
 #define XSHUT_Sensor2 A0
@@ -78,6 +78,7 @@ SFEVL53L1X sensor2;
 // Sensor 2 stays at default 0x29
 
 // Declare distances as globals
+// Measured distance
 int distance1 = 0;
 int distance2 = 0;
 
@@ -111,14 +112,60 @@ BLECStringCharacteristic rx_characteristic_string(BLE_UUID_RX_STRING, BLEWrite, 
 BLEFloatCharacteristic  tx_characteristic_float(BLE_UUID_TX_FLOAT, BLERead | BLENotify);
 BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | BLENotify, MAX_MSG_SIZE);
 
+////////////////////////////////////////////////////////// Lab 5 - Linear PID //////////////////////////////////
+#define SETPOINT 304 // 304mm = 1ft, expected distance
+#define MIN_SPEED 0
+#define MAX_SPEED 255
+float Kp = 0.5;
+float Ki = 0.0;
+float Kd = 0.0;
+int error = 0;
+int sum_error = 0;
+int previous_error = 0;
+int derivative_error = 0;
+int control_speed = 0;
+bool pid_running = false;
+
+// PID Controller w/ only proportional term (Kp)
+void runPIDController() {
+  // Continuously take a fresh ranging measurement
+  // for liner PID, use sensor 1 only
+  sensor1.startRanging();
+  while (!sensor1.checkForDataReady()) {
+      delay(1);
+  }
+  distance1 = sensor1.getDistance(); // updates global
+  sensor1.clearInterrupt();
+  sensor1.stopRanging();
+
+  error = distance1 - SETPOINT;
+  control_speed = (int)(Kp*abs(error)); // comment out when add I & D
+  
+  /* for I & D
+  sum_error = sum_error + error;
+  derivative_error = error - previous_error;
+  control_speed = (int)(Kp*error + Ki*sum_error + Kd*derivative_error);
+  previous_error = error;
+  */
+
+  control_speed = constrain(control_speed, MIN_SPEED, MAX_SPEED);
+  
+  if (abs(error) < 20) { // comment out when add I & D
+    stop();
+  } else if (error > 0) {
+    forward(control_speed);
+  } else {
+    backward(control_speed);
+  }
+}
+
 ////////////////////////////////////////////////////////// RobotCommand, communication b/w Artemis & computer //////////////////////////////////
 RobotCommand robot_cmd(":|");
 EString tx_estring_value;
 // Commands
 enum CommandTypes {
-    GET_2TOF_DATA,
-    GET_IMU_DATA,
-    GET_2TOF_IMU_TIME_DATA,
+    START_PID,
+    STOP_PID,
 };
 // Case statement to handle commands
 void handle_command() {
@@ -131,47 +178,21 @@ void handle_command() {
     if (!success) return;
 
     switch (cmd_type) {
-        case GET_2TOF_DATA:
-            millisTime = millis();
-            tx_estring_value.clear();
-            tx_estring_value.append("Distance1:");
-            tx_estring_value.append(distance1);
-            tx_estring_value.append("Distance2:");
-            tx_estring_value.append(distance2);
-            tx_estring_value.append("T:");
-            tx_estring_value.append((int)millisTime);
-            tx_characteristic_string.writeValue(tx_estring_value.c_str());
-            Serial.print("Send to Python: ");
-            Serial.println(tx_estring_value.c_str());
+      case START_PID:
+        Serial.println("Start PID!");
+        pid_running = true;
+        break;
 
-            break;
+      case STOP_PID:
+        Serial.println("Stop PID!");
+        pid_running = false;
+        stop(); // stop motors
+        break;
 
-        case GET_IMU_DATA:
-            millisTime = millis();
-            tx_estring_value.clear();
-            tx_estring_value.append("T:");
-            tx_estring_value.append((int)millisTime);
-            tx_characteristic_string.writeValue(tx_estring_value.c_str());
-            Serial.print("Send to Python: ");
-            Serial.println(tx_estring_value.c_str());
-
-            break;
-        
-        case GET_2TOF_IMU_TIME_DATA:
-            millisTime = millis();
-            tx_estring_value.clear();
-            tx_estring_value.append("T:");
-            tx_estring_value.append((int)millisTime);
-            tx_characteristic_string.writeValue(tx_estring_value.c_str());
-            Serial.print("Send to Python: ");
-            Serial.println(tx_estring_value.c_str());
-
-            break;
-
-        default:
-            Serial.print("Invalid Command Type: ");
-            Serial.println(cmd_type);
-            break;
+      default:
+        Serial.print("Invalid Command Type: ");
+        Serial.println(cmd_type);
+        break;
     }
 }
 ////////////////////////////////////////////////////////// Setup //////////////////////////////////
@@ -227,6 +248,7 @@ void setup() {
   pinMode(MOTOR1_IN_MINUS, OUTPUT);
   pinMode(MOTOR2_IN_PLUS, OUTPUT);
   pinMode(MOTOR2_IN_MINUS, OUTPUT);
+  stop(); // start at a known stop state
 }
 
 ////////////////////////////////////////////////////////// Main loop //////////////////////////////////
@@ -238,81 +260,20 @@ void loop() {
     Serial.print("Connected to: ");
     Serial.println(central.address());
     while (central.connected()) { // Hardstop --> if ble connection lost, motor stop (pwm_speed = 0)
-      // Continuously take a fresh ranging measurement
-      sensor1.startRanging();
-      sensor2.startRanging();
-      while (!sensor1.checkForDataReady()) {
-          delay(1);
-      }
-      while (!sensor2.checkForDataReady()) {
-          delay(1);
-      }
-      distance1 = sensor1.getDistance(); // updates global
-      distance2 = sensor2.getDistance(); // updates global
-      sensor1.clearInterrupt();
-      sensor2.clearInterrupt();
-      sensor1.stopRanging();
-      sensor2.stopRanging();
-
-      Serial.print("Distance1(mm):");
-      Serial.println(distance1);
-      Serial.print("Distance2(mm):");
-      Serial.println(distance2);
-
       // Respond to any incoming BLE command
       if (rx_characteristic_string.written()) {
           handle_command();
       }
+      if (pid_running) {
+        runPIDController();
+      }
     }
+    stop();
+    pid_running = false;
     Serial.println("Disconnected from central");
+    Serial.println("Hardstop, stopping motors");
   }
 }
-
-
-/*
-// stop for 10 second
-  Serial.println("Stop!");
-  stop();
-  delay(10000); 
-  // move forward 
-  Serial.println("Move forward");
-  forward(pwm_speed);
-  delay(forward_1m_time);
-
-  // stop for 3 second
-  Serial.println("Stop!");
-  stop();
-  delay(3000); 
-
-  // move backward
-  Serial.println("Move backward");
-  backward(pwm_speed);
-  delay(backward_1m_time);
-
-  // stop for 3 second
-  Serial.println("Stop!");
-  stop();
-  delay(3000);  
-
-  // Rotate CCW 180
-  Serial.println("Rotate CCW 180°");
-  rotateCW(pwm_speed);
-  delay(rotate_180_CCW_time);
-
-  // Stop for 3 seconds
-  Serial.println("Stop!");
-  stop();
-  delay(3000); 
-
-  // Rotate CW 360°
-  Serial.println("Rotate CW 360°");
-  rotateCW(pwm_speed);
-  delay(rotate_360_CW_time);
-  
-  // Stop for 3 seconds
-  Serial.println("Stop!");
-  stop();
-  delay(30000); */
 
 
 
