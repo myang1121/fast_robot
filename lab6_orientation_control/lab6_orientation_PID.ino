@@ -370,7 +370,7 @@ void runLinearPIDController() {
 
 ////////////////////////////////////////////////////////// Lab 6 - Orientation PID //////////////////////////////////
 float orientation_setpoint = 0.0; // target yaw rotation angle set by ble
-float orientation_Kp = 2.0;
+float orientation_Kp = 1;
 float orientation_Ki = 0.0;
 float orientation_Kd = 0.0;
 float orientation_error = 0;
@@ -385,7 +385,18 @@ void runOrientationPIDController() {
   if (myICM.dataReady()) {
     myICM.getAGMT();
     updateGyroYaw();
+  } 
+  // print statements for debugging only
+  else {
+    
+    Serial.println("IMU not ready!");
   }
+  // print statements for debugging only
+  Serial.print("gyro_yaw: ");
+  Serial.print(gyro_yaw);
+  Serial.print("| error: ");
+  Serial.println(orientation_error);
+
   orientation_error = orientation_setpoint - gyro_yaw;
   // P term only
   orientation_control_speed = orientation_Kp * abs(orientation_error);
@@ -411,11 +422,11 @@ void runOrientationPIDController() {
   if (abs(orientation_error) < YAW_DEADZONE) { // comment out when add I & D
     stop();
   } else if (orientation_error > 0) {
-    // yaw less than target --> rotate CW to increase yaw
-    rotateCW(orientation_control_speed);
-  } else {
-    // yaw greater than target --> rotate CCW to decrease yaw
+    // yaw less than target --> rotate CCW to increase yaw
     rotateCCW(orientation_control_speed);
+  } else {
+    // yaw greater than target --> rotate CW to decrease yaw
+    rotateCW(orientation_control_speed);
   }
 }
 
