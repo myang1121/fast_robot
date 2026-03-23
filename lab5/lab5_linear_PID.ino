@@ -134,15 +134,15 @@ bool linear_pid_running = false;
 void runLinearPIDController() {
   // Continuously take a fresh ranging measurement
   // for liner PID, use sensor 1 only
-  sensor1.startRanging();
-  while (!sensor1.checkForDataReady()) {
+  sensor2.startRanging();
+  while (!sensor2.checkForDataReady()) {
       delay(1);
   }
-  distance1 = sensor1.getDistance(); // updates global
-  sensor1.clearInterrupt();
-  sensor1.stopRanging();
+  distance2 = sensor2.getDistance(); // updates global
+  sensor2.clearInterrupt();
+  sensor2.stopRanging();
 
-  linear_error = distance1 - LINEAR_SETPOINT;
+  linear_error = distance2 - LINEAR_SETPOINT;
   linear_control_speed = (int)(linear_Kp*abs(linear_error)); // comment out when add I & D
   
   /* for I & D
@@ -157,7 +157,7 @@ void runLinearPIDController() {
   ////////////// Collect data ////////////////////////////////////
   if (arr_index < ARRAY_SIZE) {
     T_arr[arr_index] = millis();
-    Measured_distance_arr[arr_index] = distance1;
+    Measured_distance_arr[arr_index] = distance2;
     Error_arr[arr_index] = linear_error;
     Control_speed_arr[arr_index] = linear_control_speed;
     arr_index++;
@@ -180,6 +180,7 @@ enum CommandTypes {
     START_LINEAR_PID,
     STOP_LINEAR_PID,
     SEND_LINEAR_PID_DATA,
+    SET_LINEAR_PID_GAIN,
 };
 // Case statement to handle commands
 void handle_command() {
@@ -223,6 +224,24 @@ void handle_command() {
         Serial.print("Finish sending debugging data!");
         arr_index = 0; // for next run
         break;
+
+      case SET_LINEAR_PID_GAIN: {
+        // expects Kp|Ki|Kd --> "0.5|0.0|0.0"
+        char gains_str[MAX_MSG_SIZE];
+        success = robot_cmd.get_next_value(linear_Kp);
+        if (!success) break;
+        success = robot_cmd.get_next_value(linear_Ki);
+        if (!success) break;
+        success = robot_cmd.get_next_value(linear_Kd);
+        if (!success) break;
+        Serial.print("Set PID gains Kp = ");
+        Serial.print(linear_Kp);
+        Serial.print("|Ki = ");
+        Serial.print(linear_Ki);
+        Serial.print("|Kd = ");
+        Serial.println(linear_Kd);
+        break;
+      }
 
       default:
         Serial.print("Invalid Command Type: ");
