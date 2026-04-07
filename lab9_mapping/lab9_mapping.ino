@@ -304,6 +304,57 @@ BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | 
 #define LINEAR_SETPOINT 304 // 304mm = 1ft, expected distance
 #define MIN_SPEED 0
 #define MAX_SPEED 255
+float linear_Kp = 0.5;
+float linear_Ki = 0.0;
+float linear_Kd = 0.0;
+int linear_error = 0;
+int linear_sum_error = 0;
+int linear_previous_error = 0;
+int linear_derivative_error = 0;
+int linear_control_speed = 0;
+bool linear_pid_running = false;
+
+// Linear PID Controller w/ only proportional term (Kp)
+void runLinearPIDController() {
+  // Continuously take a fresh ranging measurement
+  // for liner PID, use sensor 1 only
+  sensor2.startRanging();
+  while (!sensor2.checkForDataReady()) {
+      delay(1);
+  }
+  distance2 = sensor2.getDistance(); // updates global
+  sensor2.clearInterrupt();
+  sensor2.stopRanging();
+
+  linear_error = distance2 - LINEAR_SETPOINT;
+  linear_control_speed = (int)(linear_Kp*abs(linear_error)); // comment out when add I & D
+  
+  /* for I & D
+  linear_sum_error = linear_sum_error + linear_error;
+  linear_derivative_error = linear_error - linear_previous_error;
+  linear_control_speed = (int)(linear_Kp*linear_error + linear_Ki*linear_sum_error + linear_Kd*linear_derivative_error);
+  linear_previous_error = linear_error;
+  */
+
+  linear_control_speed = constrain(linear_control_speed, MIN_SPEED, MAX_SPEED);
+
+  ////////////// Collect data ////////////////////////////////////
+  if (arr_index < ARRAY_SIZE) {
+    T_arr[arr_index] = millis();
+    Measured_distance_arr[arr_index] = distance2;
+    arr_index++;
+  }
+  // drive motors based on sign of error
+  if (abs(linear_error) < 20) { // comment out when add I & D
+    stop();
+  } else if (linear_error > 0) {
+    // measured distance less than target
+    forward(linear_control_speed);
+  } else {
+    // measured distance greater than target
+    backward(linear_control_speed);
+  }
+}
 
 ////////////////////////////////////////////////////////// Lab 6 - Orientation PID //////////////////////////////////
 float orientation_setpoint = 0.0; // target yaw rotation angle set by ble
@@ -318,13 +369,6 @@ bool orientation_pid_running = false;
 #define YAW_DEADZONE 2 // stop correcting if within +/- 2°
 
 void runOrientationPIDController() {
-  sensor2.startRanging();
-  while (!sensor2.checkForDataReady()) {
-      delay(1);
-  }
-  distance2 = sensor2.getDistance(); // updates global
-  sensor2.clearInterrupt();
-  sensor2.stopRanging();
   // update yaw estimate from gyro
   if (myICM.dataReady()) {
     myICM.getAGMT();
@@ -377,9 +421,14 @@ RobotCommand robot_cmd(":|");
 EString tx_estring_value;
 // Commands
 enum CommandTypes {
-    START_MAPPING_360_ROTATION,
-    STOP_MAPPING_360_ROTATION,
-    SEND_MAPPING_DATA,
+    // Lab 5 - linear pid
+    START_LINEAR_PID,
+    STOP_LINEAR_PID,
+    SEND_LINEAR_PID_DATA,
+    // Lab 6 - orinetation pid
+    START_ORIENTATION_PID,
+    STOP_ORIENTATION_PID,
+    SEND_ORIENTATION_PID_DATA,
     SET_ORIENTATION_SETPOINT, // update orientation_setpoint while running
     RESET_YAW, // zero out gyro_yaw, re-reference current angle, definding zero point at current boot up physical position
 };
@@ -394,20 +443,18 @@ void handle_command() {
     if (!success) return;
 
     switch (cmd_type) {
-      case START_MAPPING_360_ROTATION:
-        Serial.println("Start Orientation PID!");
-        orientation_sum_error = 0;
-        arr_index = 0;
-        orientation_pid_running = true;
+      case START_LINEAR_PID:
+        Serial.println("Start PID!");
+        linear_pid_running = true;
         break;
 
-      case STOP_MAPPING_360_ROTATION:
-        Serial.println("Stop Orientation PID!");
-        orientation_pid_running = false; 
+      case STOP_LINEAR_PID:
+        Serial.println("Stop PID!");
+        linear_pid_running = false;
         stop(); // stop motors
         break;
 
-      case SEND_MAPPING_DATA:
+      case SEND_LINEAR_PID_DATA:
         Serial.println("Sending debugging data!");
         for (int i = 0; i < arr_index; i++) {
           tx_estring_value.clear();
@@ -418,6 +465,7 @@ void handle_command() {
           tx_estring_value.append((float)Yaw_arr[i]);
           tx_estring_value.append("|D:"); // measured distance from ToF sensor reading
           tx_estring_value.append(Measured_distance_arr[i]);
+      
           
           tx_characteristic_string.writeValue(tx_estring_value.c_str());
           delay(10); // to make sure computer receive all data from BLE
@@ -425,7 +473,37 @@ void handle_command() {
         Serial.print("Finish sending debugging data!");
         arr_index = 0; // for next run
         break;
+
+      case START_ORIENTATION_PID:
+        Serial.println("Start Orientation PID!");
+        orientation_sum_error = 0;
+        arr_index = 0;
+        orientation_pid_running = true;
+        break;
+
+      case STOP_ORIENTATION_PID:
+        Serial.println("Stop Orientation PID!");
+        orientation_pid_running = false; 
+        stop(); // stop motors
+        break;
       
+      case SEND_ORIENTATION_PID_DATA:
+        Serial.println("Sending orientation debugging data!");
+        for (int i = 0; i < arr_index; i++) {
+          tx_estring_value.clear();
+
+          tx_estring_value.append("T:"); // timestamp
+          tx_estring_value.append((int)T_arr[i]);
+          tx_estring_value.append("|Y:"); // measured distance from ToF sensor reading
+          tx_estring_value.append((float)Yaw_arr[i]);
+         
+          
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+          delay(10); // to make sure computer receive all data from BLE
+        }
+        Serial.print("Finish sending debugging data!");
+        arr_index = 0; // for next run
+        break;
       case SET_ORIENTATION_SETPOINT: { // add curly bracket b/c define variable in case statement
         float new_setpoint;
         success = robot_cmd.get_next_value(new_setpoint);
@@ -529,11 +607,15 @@ void loop() {
       if (rx_characteristic_string.written()) {
           handle_command();
       }
+      if (linear_pid_running) {
+        runLinearPIDController();
+      }
       if (orientation_pid_running) {
         runOrientationPIDController();
       }
     }
     stop();
+    linear_pid_running = false;
     orientation_pid_running = false;
     Serial.println("Disconnected from central");
     Serial.println("Hardstop, stopping motors");
