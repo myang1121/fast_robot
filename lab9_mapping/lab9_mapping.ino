@@ -307,7 +307,7 @@ BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | 
 // widen the deadzone to trigger angle_read_already
 #define YAW_DEADZONE 5.0
 // settle delay, only log ToF and imu data after inside deadzone for a brief time to confirm it's actually stable
-unsigned long settled_since = 0;
+//unsigned long settled_since = 0;
 #define SETTLE_MS 300 // angle rotation must settle for 300 ms before logging data
 
 float orientation_setpoint = 0.0; // target yaw rotation angle set by ble
@@ -378,11 +378,14 @@ void runOrientationPIDController() {
   ////////////// Collect data ////////////////////////////////////
   if (abs(orientation_error) < YAW_DEADZONE) {
     stop();
+    /*
     if (settled_since == 0) {
       settled_since = millis(); // start settle timer
     }
+    */
     // only log time after staying settled for SETTLE_MS
-    if (!angle_read_already && (millis() - settled_since > SETTLE_MS) && arr_index < ARRAY_SIZE) {
+    //if (!angle_read_already && (millis() - settled_since > SETTLE_MS) && arr_index < ARRAY_SIZE) {
+    if (!angle_read_already && arr_index < ARRAY_SIZE) {
       T_arr[arr_index]                 = millis();
       Yaw_arr[arr_index]               = gyro_yaw;
       Measured_distance_arr[arr_index] = distance2;
@@ -396,8 +399,8 @@ void runOrientationPIDController() {
 
     }
   } else {
-    settled_since = 0; // reset settle timer after resume moving (rotation to next setpoint angle)
-    angle_read_already = false;   // reset flag when moving toward new angle
+    //settled_since = 0; // reset settle timer after resume moving (rotation to next setpoint angle)
+    //angle_read_already = false;   // reset flag when moving toward new angle
     if (orientation_error > 0) {
       rotateCCW(orientation_control_speed);
     } else {
@@ -429,7 +432,7 @@ void handle_command() {
 
     switch (cmd_type) {
       case START_MAPPING_360_ROTATION:
-        settled_since = 0;
+        //settled_since = 0;
         Serial.println("Start mapping!");
         orientation_sum_error = 0;
         arr_index = 0;
@@ -464,7 +467,7 @@ void handle_command() {
         arr_index = 0; // for next run
         break;
       case SET_ORIENTATION_SETPOINT: { // add curly bracket b/c define variable in case statement
-        settled_since = 0;
+        //settled_since = 0;
         float new_setpoint;
         success = robot_cmd.get_next_value(new_setpoint);
         if (success) {
