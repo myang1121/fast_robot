@@ -311,7 +311,7 @@ unsigned long settled_since = 0;
 #define SETTLE_MS 300 // angle rotation must settle for 300 ms before logging data
 
 float orientation_setpoint = 0.0; // target yaw rotation angle set by ble
-float orientation_Kp = 3.0;
+float orientation_Kp = 6.0;
 float orientation_Ki = 0.0;
 float orientation_Kd = 0.0;
 float orientation_error = 0;
@@ -323,6 +323,7 @@ bool orientation_pid_running = false;
 bool angle_read_already = false;
 
 void runOrientationPIDController() {
+  //Serial.println("PID LOOOOOOP running");
   // update yaw estimate from gyro
   if (myICM.dataReady()) {
     myICM.getAGMT();
@@ -428,12 +429,13 @@ void handle_command() {
 
     switch (cmd_type) {
       case START_MAPPING_360_ROTATION:
-      settled_since = 0;
+        settled_since = 0;
         Serial.println("Start mapping!");
         orientation_sum_error = 0;
         arr_index = 0;
         orientation_pid_running = true;
         angle_read_already = false;
+        last_time = millis(); // reset dt reference
         sensor2.startRanging();
         break;
 
@@ -492,7 +494,7 @@ void handle_command() {
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("Lab 6 - Orientation PID");
+  Serial.println("Lab 9 - Orientation PID");
   ////////////// BLE Setup /////////////////////////////
   BLE.begin();
   BLE.setDeviceName("Artemis BLE");
