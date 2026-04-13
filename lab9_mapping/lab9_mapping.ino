@@ -401,6 +401,10 @@ void runOrientationPIDController() {
   } else {
     //settled_since = 0; // reset settle timer after resume moving (rotation to next setpoint angle)
     //angle_read_already = false;   // reset flag when moving toward new angle
+
+    // ensure motor always has enough PWM to overcome static friction
+    orientation_control_speed = max(orientation_control_speed, 100.0f);
+    
     if (orientation_error > 0) {
       rotateCCW(orientation_control_speed);
     } else {
