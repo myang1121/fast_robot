@@ -300,65 +300,18 @@ BLECStringCharacteristic rx_characteristic_string(BLE_UUID_RX_STRING, BLEWrite, 
 BLEFloatCharacteristic  tx_characteristic_float(BLE_UUID_TX_FLOAT, BLERead | BLENotify);
 BLECStringCharacteristic tx_characteristic_string(BLE_UUID_TX_STRING, BLERead | BLENotify, MAX_MSG_SIZE);
 
-////////////////////////////////////////////////////////// Lab 5 - Linear PID //////////////////////////////////
-#define LINEAR_SETPOINT 304 // 304mm = 1ft, expected distance
+////////////////////////////////////////////////////////// Lab 6 - Orientation PID //////////////////////////////////
 #define MIN_SPEED 0
 #define MAX_SPEED 255
-float linear_Kp = 0.5;
-float linear_Ki = 0.0;
-float linear_Kd = 0.0;
-int linear_error = 0;
-int linear_sum_error = 0;
-int linear_previous_error = 0;
-int linear_derivative_error = 0;
-int linear_control_speed = 0;
-bool linear_pid_running = false;
+// #define YAW_DEADZONE 2.0 // stop correcting if within +/- 2°
+// widen the deadzone to trigger angle_read_already
+#define YAW_DEADZONE 5.0
+// settle delay, only log ToF and imu data after inside deadzone for a brief time to confirm it's actually stable
+//unsigned long settled_since = 0;
+#define SETTLE_MS 300 // angle rotation must settle for 300 ms before logging data
 
-// Linear PID Controller w/ only proportional term (Kp)
-void runLinearPIDController() {
-  // Continuously take a fresh ranging measurement
-  // for liner PID, use sensor 1 only
-  sensor2.startRanging();
-  while (!sensor2.checkForDataReady()) {
-      delay(1);
-  }
-  distance2 = sensor2.getDistance(); // updates global
-  sensor2.clearInterrupt();
-  sensor2.stopRanging();
-
-  linear_error = distance2 - LINEAR_SETPOINT;
-  linear_control_speed = (int)(linear_Kp*abs(linear_error)); // comment out when add I & D
-  
-  /* for I & D
-  linear_sum_error = linear_sum_error + linear_error;
-  linear_derivative_error = linear_error - linear_previous_error;
-  linear_control_speed = (int)(linear_Kp*linear_error + linear_Ki*linear_sum_error + linear_Kd*linear_derivative_error);
-  linear_previous_error = linear_error;
-  */
-
-  linear_control_speed = constrain(linear_control_speed, MIN_SPEED, MAX_SPEED);
-
-  ////////////// Collect data ////////////////////////////////////
-  if (arr_index < ARRAY_SIZE) {
-    T_arr[arr_index] = millis();
-    Measured_distance_arr[arr_index] = distance2;
-    arr_index++;
-  }
-  // drive motors based on sign of error
-  if (abs(linear_error) < 20) { // comment out when add I & D
-    stop();
-  } else if (linear_error > 0) {
-    // measured distance less than target
-    forward(linear_control_speed);
-  } else {
-    // measured distance greater than target
-    backward(linear_control_speed);
-  }
-}
-
-////////////////////////////////////////////////////////// Lab 6 - Orientation PID //////////////////////////////////
 float orientation_setpoint = 0.0; // target yaw rotation angle set by ble
-float orientation_Kp = 1;
+float orientation_Kp = 3.0;
 float orientation_Ki = 0.0;
 float orientation_Kd = 0.0;
 float orientation_error = 0;
@@ -366,7 +319,8 @@ float orientation_sum_error = 0;
 float orientation_control_speed = 0;
 bool orientation_pid_running = false;
 
-#define YAW_DEADZONE 2 // stop correcting if within +/- 2°
+// Track whether already logged a reading at current angle
+bool angle_read_already = false;
 
 void runOrientationPIDController() {
   // update yaw estimate from gyro
@@ -375,19 +329,30 @@ void runOrientationPIDController() {
     updateGyroYaw();
   } 
   // print statements for debugging only
+  /*
   else {
     
     Serial.println("IMU not ready!");
   }
+  */
+  /*
   // print statements for debugging only
   Serial.print("gyro_yaw: ");
   Serial.print(gyro_yaw);
   Serial.print("| error: ");
   Serial.println(orientation_error);
+  */
 
   orientation_error = orientation_setpoint - gyro_yaw;
   // P term only
   orientation_control_speed = orientation_Kp * abs(orientation_error);
+
+  if (sensor2.checkForDataReady()) {
+    distance2 = sensor2.getDistance();
+    sensor2.clearInterrupt();
+    sensor2.stopRanging();
+    sensor2.startRanging();
+  }
 
   /* w/ I & D
   orientation_sum_error += orientation_error;
@@ -397,22 +362,50 @@ void runOrientationPIDController() {
   orientation_control_speed = (int)(orientation_Kp*orientation_error + orientation_Ki*orientation_sum_error - orientation_Kd*gyro_z_corrected);
   */
   orientation_control_speed = constrain(orientation_control_speed, MIN_SPEED, MAX_SPEED);
+  
+  /*
+  // add minimum speed floor so motor speed never drops below deadband even at small errors
+  if (abs(orientation_error) >= YAW_DEADZONE) {
+    // motor always gets at least 90 PWM when outside deadzone, so it moves rather than stall
+    // for more consistent turns (not turn a lot, turn a little, turn a lot..., stall)
+    orientation_control_speed = constrain(orientation_control_speed, 90, MAX_SPEED); // 90 is above deadband
+  } else {
+    orientation_control_speed = 0;
+  }
+  */
 
   ////////////// Collect data ////////////////////////////////////
-  if (arr_index < ARRAY_SIZE) {
-    T_arr[arr_index] = millis();
-    Yaw_arr[arr_index] = gyro_yaw;
-    arr_index++;
-  }
-  // drive motors based on sign of error
-  if (abs(orientation_error) < YAW_DEADZONE) { // comment out when add I & D
+  if (abs(orientation_error) < YAW_DEADZONE) {
     stop();
-  } else if (orientation_error > 0) {
-    // yaw less than target --> rotate CCW to increase yaw
-    rotateCCW(orientation_control_speed);
+    /*
+    if (settled_since == 0) {
+      settled_since = millis(); // start settle timer
+    }
+    */
+    
+    // only log time after staying settled for SETTLE_MS
+    //if (!angle_read_already && (millis() - settled_since > SETTLE_MS) && arr_index < ARRAY_SIZE) {
+    if (!angle_read_already && arr_index < ARRAY_SIZE) {
+      T_arr[arr_index]                 = millis();
+      Yaw_arr[arr_index]               = gyro_yaw;
+      Measured_distance_arr[arr_index] = distance2;
+      arr_index++;
+      angle_read_already = true;  // don't log again until target angle changes
+      // for debugging
+      Serial.print("Logged reading ");
+      Serial.print(arr_index);          
+      Serial.print(" yaw=");           
+      Serial.println(gyro_yaw); 
+
+    }
   } else {
-    // yaw greater than target --> rotate CW to decrease yaw
-    rotateCW(orientation_control_speed);
+    //settled_since = 0; // reset settle timer after resume moving (rotation to next setpoint angle)
+    angle_read_already = false;   // reset flag when moving toward new angle
+    if (orientation_error > 0) {
+      rotateCCW(orientation_control_speed);
+    } else {
+      rotateCW(orientation_control_speed);
+    }
   }
 }
 
@@ -421,14 +414,9 @@ RobotCommand robot_cmd(":|");
 EString tx_estring_value;
 // Commands
 enum CommandTypes {
-    // Lab 5 - linear pid
-    START_LINEAR_PID,
-    STOP_LINEAR_PID,
-    SEND_LINEAR_PID_DATA,
-    // Lab 6 - orinetation pid
-    START_ORIENTATION_PID,
-    STOP_ORIENTATION_PID,
-    SEND_ORIENTATION_PID_DATA,
+    START_MAPPING_360_ROTATION,
+    STOP_MAPPING_360_ROTATION,
+    SEND_MAPPING_DATA, 
     SET_ORIENTATION_SETPOINT, // update orientation_setpoint while running
     RESET_YAW, // zero out gyro_yaw, re-reference current angle, definding zero point at current boot up physical position
 };
@@ -443,51 +431,24 @@ void handle_command() {
     if (!success) return;
 
     switch (cmd_type) {
-      case START_LINEAR_PID:
-        Serial.println("Start PID!");
-        linear_pid_running = true;
-        break;
-
-      case STOP_LINEAR_PID:
-        Serial.println("Stop PID!");
-        linear_pid_running = false;
-        stop(); // stop motors
-        break;
-
-      case SEND_LINEAR_PID_DATA:
-        Serial.println("Sending debugging data!");
-        for (int i = 0; i < arr_index; i++) {
-          tx_estring_value.clear();
-
-          tx_estring_value.append("T:"); // timestamp
-          tx_estring_value.append((int)T_arr[i]);
-          tx_estring_value.append("|Y:"); // yaw angle from IMU gyro reading
-          tx_estring_value.append((float)Yaw_arr[i]);
-          tx_estring_value.append("|D:"); // measured distance from ToF sensor reading
-          tx_estring_value.append(Measured_distance_arr[i]);
-      
-          
-          tx_characteristic_string.writeValue(tx_estring_value.c_str());
-          delay(10); // to make sure computer receive all data from BLE
-        }
-        Serial.print("Finish sending debugging data!");
-        arr_index = 0; // for next run
-        break;
-
-      case START_ORIENTATION_PID:
-        Serial.println("Start Orientation PID!");
+      case START_MAPPING_360_ROTATION:
+      //settled_since = 0;
+        Serial.println("Start mapping!");
         orientation_sum_error = 0;
         arr_index = 0;
         orientation_pid_running = true;
+        angle_read_already = false;
+        sensor2.startRanging();
         break;
 
-      case STOP_ORIENTATION_PID:
-        Serial.println("Stop Orientation PID!");
+      case STOP_MAPPING_360_ROTATION:
+        Serial.println("Stop Mapping!");
         orientation_pid_running = false; 
         stop(); // stop motors
+        sensor2.stopRanging();
         break;
       
-      case SEND_ORIENTATION_PID_DATA:
+      case SEND_MAPPING_DATA:
         Serial.println("Sending orientation debugging data!");
         for (int i = 0; i < arr_index; i++) {
           tx_estring_value.clear();
@@ -496,8 +457,8 @@ void handle_command() {
           tx_estring_value.append((int)T_arr[i]);
           tx_estring_value.append("|Y:"); // measured distance from ToF sensor reading
           tx_estring_value.append((float)Yaw_arr[i]);
-         
-          
+          tx_estring_value.append("|D:"); // measured distance from ToF sensor reading
+          tx_estring_value.append(Measured_distance_arr[i]);
           tx_characteristic_string.writeValue(tx_estring_value.c_str());
           delay(10); // to make sure computer receive all data from BLE
         }
@@ -505,10 +466,12 @@ void handle_command() {
         arr_index = 0; // for next run
         break;
       case SET_ORIENTATION_SETPOINT: { // add curly bracket b/c define variable in case statement
+        //settled_since = 0;
         float new_setpoint;
         success = robot_cmd.get_next_value(new_setpoint);
         if (success) {
           orientation_setpoint = new_setpoint;
+          angle_read_already = false; // one reading each target angle
           Serial.print("New orientation setpoint: ");
           Serial.println(orientation_setpoint);
         }
@@ -518,6 +481,7 @@ void handle_command() {
         gyro_yaw = 0.0;
         orientation_setpoint = 0.0;
         orientation_sum_error = 0;
+        angle_read_already = false;
         Serial.println("Yaw reset to 0");
         break;
 
@@ -607,15 +571,11 @@ void loop() {
       if (rx_characteristic_string.written()) {
           handle_command();
       }
-      if (linear_pid_running) {
-        runLinearPIDController();
-      }
       if (orientation_pid_running) {
         runOrientationPIDController();
       }
     }
     stop();
-    linear_pid_running = false;
     orientation_pid_running = false;
     Serial.println("Disconnected from central");
     Serial.println("Hardstop, stopping motors");
